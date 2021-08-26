@@ -84,7 +84,7 @@ bool isSubarray(const vector<string> &a, const vector<string> &b){
     return false;
 }
 
-bool isPrimeA(int n){
+bool isPrimeA(int n){ //testing
     return false;
 }
 
@@ -100,7 +100,7 @@ int sumPrimesB(int n)
     return 0;
 }
 
-int sieveOfErathosthenes(int n){
+int sieveOfErathosthenes(int n){  
     return 0;
 }
 
