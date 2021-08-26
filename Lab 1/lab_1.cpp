@@ -97,6 +97,7 @@ bool isPrimeB(int n){
 }
 
 int sumPrimesB(int n)
+{
     return 0;
 }
 
