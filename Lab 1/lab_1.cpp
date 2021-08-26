@@ -138,7 +138,6 @@ int main(){
             cin >> k;
             cout << sumMultiples(v, k) << endl;
             break;
-
         case 4: //greaterThanK
             cin >> n;
             readIntVector(v, n);
@@ -146,7 +145,6 @@ int main(){
             greaterThanK(v, k);
             for (int j = 0; j < v.size(); j++){ cout << v[j] << " "; }
             break;
-
         case 5: //pivot
             cin >> n;
             readIntVector(v, n);
@@ -154,7 +152,6 @@ int main(){
             pivot(v, k);
             for (int j = 0; j < v.size(); j++){ cout << v[j] << " "; }
             break;
-
         case 6: //isSubarray
             cin >> n >> m;
             for (int i = 0; i < n; i++){
@@ -167,12 +164,10 @@ int main(){
             }
             cout << isSubarray(a, b) << endl;
             break;
-
         case 7: //primes
             cin >> n;
             cout << sumPrimesA(n) << " " << sumPrimesB(n) << " " << sieveOfErathosthenes(n) << endl;
             break;
-
         case 8: //time primes
             timePrimes();
             break;
