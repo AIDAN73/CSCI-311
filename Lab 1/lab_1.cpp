@@ -98,7 +98,7 @@ bool isPrimeB(int n){
 
 int sumPrimesB(int n)
 {
-    return 0;           //changed this
+    return 0;          
 }
 
 int sieveOfErathosthenes(int n){  
