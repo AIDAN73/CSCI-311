@@ -119,25 +119,80 @@ bool isSubarray(const vector<string> &a, const vector<string> &b)
     return false;                   
 }
 
-bool isPrimeA(int n){ //testing
-    return false;
+bool isPrimeA(int n)
+{ 
+    for (int i=2; i<n; i++)
+    {
+        if (n%i==0) return false;   
+    }
+    return true;
 }
 
-int sumPrimesA(int n){
-    return 0;
+int sumPrimesA(int n)
+{
+    int sum=0;
+
+    for (int i=2; i<n; i++)     //test everything up to n, skipping 0 and 1 
+    {
+        if (isPrimeA(i)) sum+=i;        //use isPrimeA
+    }
+    return sum;
 }
 
-bool isPrimeB(int n){
-    return false;
+bool isPrimeB(int n)
+{ 
+    for (int i=2; i<=sqrt(n); i++)
+    {
+        if (n%i==0) return false;   
+    }
+    return true;
 }
 
 int sumPrimesB(int n)
 {
-    return 0;          
+    int sum=0;
+
+    for (int i=2; i<n; i++)     //test everything up to n, skipping 0 and 1 
+    {
+        if (isPrimeB(i)) sum+=i;    //use isPrimeB
+    }
+
+
+
+
+
+    return sum;
 }
 
-int sieveOfErathosthenes(int n){  
-    return 0;
+int sieveOfErathosthenes(int n)
+{  
+    int sum=0;
+    vector<int> v;
+
+    for (int i=0; i<n; i++)         //including 0 and 1 so that the vector index matches the value
+    {
+        v.push_back(i);
+    }
+
+    for (int i=2; i<=sqrt(n); i++)          //only work with the indexes after 1 though
+    {
+        if (v[i]!=0)
+        {
+            for(int j=2*i; j<v.size(); j+=i)
+            {
+                //cout<<"Zeroing "<<v[j]<<endl;
+                v[j]=0;
+            }
+        }
+    }
+
+    for (int i=2; i<v.size(); i++)
+    {
+        //cout<<"Adding "<<v[i]<<endl;
+        sum+=v[i];
+    }
+
+    return sum;
 }
 
 /***********************************************
