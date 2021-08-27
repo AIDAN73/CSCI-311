@@ -25,6 +25,12 @@ int collatzLength(int n)
 
 void printStats(const vector<int> &v)
 {
+    if (v.size()==0)
+    {
+        cout<<"Empty vector"<<endl;
+        return;
+
+    } 
     int min = v[0];                 //setup stats to write
     int max = v[0];
     double mean = 0;
@@ -70,18 +76,47 @@ void greaterThanK(vector<int> &v, int k)
 
 void pivot(vector<int> &v, int k)
 {
-    for (int i=0; i<v.size(); i++)
+    int i=0;
+    int j=v.size()-1;                //one starts at the beginning, one at the end
+
+    while (i < j)                      //while the two sides haven't passed each other
     {
-        if (v[i] <= k)
+        for (i; i<j; i++)
         {
-            v.insert(v.begin(), v[i]);
-            v.erase(v.begin()+i);
+            if (v[i] > k) break;
         }
+        for (j; j>i; j--)
+        {
+            if (v[j] <= k) break;
+        }
+
+        int temp = v[i];
+        v[i] = v[j];
+        v[j] = temp;
     }
 }
 
-bool isSubarray(const vector<string> &a, const vector<string> &b){
-    return false;
+bool isSubarray(const vector<string> &a, const vector<string> &b)
+{
+    for (int i=0; i<b.size(); i++)              //check through B
+    {
+        //cout<<"Checking "<<i<<endl;
+        if (b[i]==a[0])                        //if this index of B is the same as the start of A
+        {
+            for (int j=0; j<=a.size(); j++)      //for the size of A (except for the value we already checked)
+            {
+                //cout<<"Subchecking "<<j<<endl;
+                if (j==a.size()) return true;          //if we're at the end of A and everything has matched, it's a subset
+
+                if (a[j] != b[i+j]) 
+                {
+                    //cout<<"breaking"<<endl;
+                    break;                //if they don't match exit
+                }
+            }
+        }
+    }
+    return false;                   
 }
 
 bool isPrimeA(int n){ //testing
