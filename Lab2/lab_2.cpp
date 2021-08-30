@@ -41,9 +41,8 @@ int rSum(const vector<int> &v)
 
 int rMaxHelper(const vector<int> &v, int start)
 {
-    if (start==v.size()-2)                                      //end case
-        if (v[start] > v[start+1]) return v[start];
-        else return v[start+1];
+    if (start==v.size()-1)   return std::max(v[start], v[start+1]);                                     //end case
+        
 
     if (v)
     return 0;
