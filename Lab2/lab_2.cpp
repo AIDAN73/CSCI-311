@@ -41,17 +41,15 @@ int rSum(const vector<int> &v)
 
 int rMaxHelper(const vector<int> &v, int start)
 {
-    if (start==v.size()-1)   return std::max(v[start], v[start+1]);                                     //end case
-        
+    if (start==1)   return v[0];   
 
-    if (v)
-    return 0;
+    return max(v[start-1], rMaxHelper(v, start-1));                                 
 }
 
 int rMax(const vector<int> &v)
 {
     if (v.size() == 0) return INT_MIN;
-    return 0;
+    return rMaxHelper(v, v.size());
 }
 
 bool isSorted(const vector<int> &v, int start, int end){
