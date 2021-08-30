@@ -52,8 +52,22 @@ int rMax(const vector<int> &v)
     return rMaxHelper(v, v.size());
 }
 
-bool isSorted(const vector<int> &v, int start, int end){
-    return false;
+bool isSorted(const vector<int> &v, int start, int end)
+{
+    
+    if (start == end) 
+    { 
+        //cout<<"At end"<<endl;
+        return true;
+    }
+    if (v[start] > v[start+1]) 
+    {
+        //cout<<v[start]<< " > " <<v[start+1]<<endl;
+        return false;
+    }
+
+    //cout<<v[start]<< " <= " <<v[start+1]<<endl;
+    return isSorted(v, start+1, end);
 }
 
 bool isPalindromeHelper(string s, int start, int end){
