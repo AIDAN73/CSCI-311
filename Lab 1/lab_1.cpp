@@ -64,12 +64,12 @@ int sumMultiples(const vector<int> &v, int n)
 
 void greaterThanK(vector<int> &v, int k)
 {
-    for (int i=0; i<v.size(); i++)
+    for (int i=0; i<v.size(); i++)          //iterate through vector
     {
-        if (v[i] <= k)
+        if (v[i] <= k)                      //if something is smaller than k
         {
-            v.erase(v.begin()+i);
-            i--;
+            v.erase(v.begin()+i);           //delete it
+            i--;                            //and check the thing that took its place
         }
     }
 }
@@ -83,14 +83,14 @@ void pivot(vector<int> &v, int k)
     {
         for (i; i<j; i++)
         {
-            if (v[i] > k) break;
+            if (v[i] > k) break;        //move i until it's larger than k
         }
-        for (j; j>i; j--)
+        for (j; j>i; j--)               
         {
-            if (v[j] <= k) break;
+            if (v[j] <= k) break;       //move j until its smaller or equal to k
         }
 
-        int temp = v[i];
+        int temp = v[i];                //swap places of i and j
         v[i] = v[j];
         v[j] = temp;
     }
@@ -123,7 +123,7 @@ bool isPrimeA(int n)
 { 
     for (int i=2; i<n; i++)
     {
-        if (n%i==0) return false;   
+        if (n%i==0) return false;           //check if any number between 2 and n divides into n
     }
     return true;
 }
@@ -143,7 +143,7 @@ bool isPrimeB(int n)
 { 
     for (int i=2; i<=sqrt(n); i++)
     {
-        if (n%i==0) return false;   
+        if (n%i==0) return false;           //check if any number between 2 and sqrt(n) divides into n
     }
     return true;
 }
@@ -156,11 +156,6 @@ int sumPrimesB(int n)
     {
         if (isPrimeB(i)) sum+=i;    //use isPrimeB
     }
-
-
-
-
-
     return sum;
 }
 
@@ -171,24 +166,22 @@ int sieveOfErathosthenes(int n)
 
     for (int i=0; i<n; i++)         //including 0 and 1 so that the vector index matches the value
     {
-        v.push_back(i);
+        v.push_back(i);             //create vector with values of 0-n in order (we will only use 2-n)
     }
 
-    for (int i=2; i<=sqrt(n); i++)          //only work with the indexes after 1 though
+    for (int i=2; i<=sqrt(n); i++)          //only work with the indexes after 1
     {
-        if (v[i]!=0)
+        if (v[i]!=0)                                //if this index hasn't been marked as nonprime
         {
-            for(int j=2*i; j<v.size(); j+=i)
+            for(int j=2*i; j<v.size(); j+=i)        //mark all the multiples of this number as nonprime
             {
-                //cout<<"Zeroing "<<v[j]<<endl;
                 v[j]=0;
             }
         }
     }
 
-    for (int i=2; i<v.size(); i++)
+    for (int i=2; i<v.size(); i++)                  //add up the whole vector after 2, all of which that aren't zero are prime
     {
-        //cout<<"Adding "<<v[i]<<endl;
         sum+=v[i];
     }
 
