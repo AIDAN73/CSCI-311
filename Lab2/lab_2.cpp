@@ -54,8 +54,9 @@ int rMax(const vector<int> &v)
 
 bool isSorted(const vector<int> &v, int start, int end)
 {
-    
-    if (start == end) 
+    if(v.size() == 0) return true;
+
+    if (start+1 >= end) 
     { 
         //cout<<"At end"<<endl;
         return true;
