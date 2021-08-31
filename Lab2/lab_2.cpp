@@ -55,32 +55,43 @@ int rMax(const vector<int> &v)
 bool isSorted(const vector<int> &v, int start, int end)
 {
     if(v.size() == 0) return true;
+    if (start+1 >= end) return true;
+    if (v[start] > v[start+1]) return false; 
 
-    if (start+1 >= end) 
-    { 
-        //cout<<"At end"<<endl;
-        return true;
-    }
-    if (v[start] > v[start+1]) 
-    {
-        //cout<<v[start]<< " > " <<v[start+1]<<endl;
-        return false;
-    }
-
-    //cout<<v[start]<< " <= " <<v[start+1]<<endl;
     return isSorted(v, start+1, end);
 }
 
-bool isPalindromeHelper(string s, int start, int end){
-    return false;
+bool isPalindromeHelper(string s, int start, int end)
+{
+    if (start >= end) return true;                      //if the ends have met or passed each other it's a palindrome
+
+    if (s[start] != s[end])  return false;              //stop if one of the pairs don't match each other
+
+    return isPalindromeHelper(s, start+1, end-1);           //check the next characters inside
 }
 
-bool isPalindrome(string s){
-    return false;
+bool isPalindrome(string s)
+{
+    if (s.size() <= 1) return true;             //if it has one or zero characters, it's a palindrome
+    return isPalindromeHelper(s, 0, s.size()-1);
 }
 
-int rBinarySearch(const vector<int> &v, int low, int high, int target){
-    return 0;
+int rBinarySearch(const vector<int> &v, int low, int high, int target)
+{
+    if (low>high) return -1;
+
+    if (low==high)
+        {
+            if (v[low]==target) return low;
+            return -1;
+        }
+
+    int mid = (low + high)/2;
+    if (v[mid] == target) return mid;
+
+    if (target < v[mid]) return rBinarySearch(v, low, mid, target);
+
+    else return rBinarySearch(v, mid, high, target);   
 }
 
 bool rSubsetSum(const vector<int> &v, int start, int sum){
