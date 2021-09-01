@@ -94,14 +94,15 @@ int rBinarySearch(const vector<int> &v, int low, int high, int target)
     else return rBinarySearch(v, mid+1, high, target);          //if the middle is low, check with the middle as the minimum
 }
 
-bool rSubsetSum(const vector<int> &v, int start, int target)
+bool rSubsetSum(const vector<int> &v, int start, int target)    
 {
-    if (start >= v.size()) return false;
+    if (start >= v.size()) return false;        //we've checked the whole array
 
-    if (target - v[start] == 0) return true; 
-
-    if (rSubsetSum(v, start+1, target)) return true;
-    if (rSubsetSum(v, start+1, target-v[start])) return true;
+    if (target - v[start] == 0) return true;    //if adding this value hits our target, we did it
+    
+                                                                        
+    if (rSubsetSum(v, start+1, target)) return true;                    //if we're not quite there, there's two possibilities: This current value is part of the sum, or it isn't. Isn't case
+    if (rSubsetSum(v, start+1, target-v[start])) return true;           //is case
     
     return false;
 }
