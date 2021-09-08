@@ -10,16 +10,20 @@ using namespace std::chrono;
 vector<int> bubbleSort(vector<int> &v)
 {
     int temp;
-
-    for (int i=0; i < v.size()-1; i++)      //for each value in the array
+    bool sorted = false;
+    while (!sorted)
     {
-        for (int j=i; j<v.size()-1-i; j++)      
+        sorted = true;
+
+        for (int i=1; i<v.size()-1; i++)
         {
-            if (v[j]>v[j+1])
+            if (v[i-1] < v[i])
             {
-                temp = v[j];                //if the indexes are in the wrong order, swap them
-                v[j]=v[j+1];
-                v[j+1]=temp;
+                temp = v[i-1];
+                v[i-1] = v[i];
+                v[i] = temp;
+
+                sorted = false;
             }
         }
     }
@@ -39,7 +43,7 @@ void quickSort(vector<int> &v)
 
 bool isSorted(const vector<int> &v) //checks whether a given vector is properly sorted
 {
-    for (int i=0; i<v.size(); i++)
+    for (int i=0; i<v.size()-1; i++)
     {
         if (v[i] > v[i+1]) return false;
     }
@@ -52,7 +56,16 @@ bool isSorted(const vector<int> &v) //checks whether a given vector is properly 
 
 
 
-void displayVector(const vector<int> &v)        //displays all values in vector, with endl after
+void displayIntVector(const vector<int> &v)        //displays all values in vector, with endl after
+{
+    for (int i=0; i<v.size(); i++)
+    {
+        cout<<v[i]<<" ";
+    }
+    cout<<endl;
+}
+
+void displayDoubleVector(const vector<double> &v)
 {
     for (int i=0; i<v.size(); i++)
     {
@@ -79,11 +92,11 @@ void testBubbleSort()
     
 
     vector<vector<int>> vectorsList;                            //2d vector
-    vector<int>
+    vector<double> testResults;
 
     for (int i=0; i < number_test_vectors; i++)
     {
-        vectorsList.push_back(randomVector(100, 0, 10));         //fills testVectors with 10 random vectors of size 100, with values from 0 to 100
+        vectorsList.push_back(randomVector(1000, 0, 10));         //fills testVectors with 10 random vectors of size 100, with values from 0 to 100
     }
 
     for (int i=0; i<number_test_vectors; i++)
@@ -94,14 +107,19 @@ void testBubbleSort()
         bubbleSort(testVector);
         auto end = chrono::high_resolution_clock::now();
         double elapsed = chrono::duration_cast< chrono::duration<double> > (end-start).count();
-    
-    }
 
+        if (isSorted(testVector)) cout<<"Vector "<<i+1<<" is sorted"<<endl;
+        else cout<<"Vector "<<i+1<<" is not sorted"<<endl;
+        
+
+        testResults.push_back(elapsed);
+    }
+    //cout<<"Results: "<<endl;
+    //displayDoubleVector(testResults);
 }
 
 int main()
 {
-
     srand(time(NULL));
 
     int question = -1;
