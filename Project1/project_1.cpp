@@ -133,20 +133,7 @@ vector<int> selectSort(vector<int> &v)
 
 vector<int> quickSort(vector<int> &v)
 {
-    if (v.size() == 1) 
-    {
-        cout<<"Returning "<<v[0]<<endl;
-        return v;
-    }
-
-    if(v.size() < 1)
-    {
-        cout<<"Returning empty"<<endl;
-        return v;
-    }
-
-    cout<<"Running ";
-    displayIntVector(v);
+    if (v.size() <= 1) return v;
 
     int pivot = v[0];
     vector<int> A; 
@@ -158,14 +145,12 @@ vector<int> quickSort(vector<int> &v)
         else if (v[i] > pivot) B.push_back(v[i]);
     }
 
-    quickSort(A);
-    quickSort(B); 
+    A=quickSort(A);
+    B=quickSort(B); 
 
     A.push_back(pivot);
     A.insert(A.end(), B.begin(), B.end());
-    cout<<"Returning ";
-    displayIntVector(A);
-
+    
     return A;
 
 
@@ -265,16 +250,12 @@ cout<<"Testing Quick Sort on "<<number_test_vectors<<" vectors of length 100"<<e
     bool quickSortSuccessful = true;                               //holds whether everything's sorted successfully
     for (int i=0; i<number_test_vectors; i++)
     {
-        vector<int> testVector = vectorsList[i];                //makes a copy of the current testing vector from master list
-        cout<<"Vector "<<i<<": "<<endl;
-        displayIntVector(testVector);                         
+        vector<int> testVector = vectorsList[i];                //makes a copy of the current testing vector from master list                         
 
         auto start = chrono::high_resolution_clock::now();                                              //start clock
         testVector = quickSort(testVector);                                                            //sort the copy
         auto end = chrono::high_resolution_clock::now();                                                //stop clock
         double elapsed = chrono::duration_cast< chrono::duration<double> > (end-start).count();         //find difference in time
-
-        displayIntVector(testVector);
 
         if (isSorted(testVector)) quickResults.push_back(elapsed);                                     //if it's sorted, push the runtime
         else 
