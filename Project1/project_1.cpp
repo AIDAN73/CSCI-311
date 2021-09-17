@@ -3,8 +3,11 @@
 #include <time.h>
 #include <math.h>
 #include <chrono>
+#include <fstream>
 using namespace std; 
 using namespace std::chrono;
+
+static const char*  star_line= "********************************************************************************"; 
 
 bool isSorted(const vector<int> &v) //checks whether a given vector is properly sorted
 {
@@ -41,6 +44,18 @@ vector<int> randomVector(int size, int low, int high)
         v[i] = rand() % (high - low + 1) + low;
     }
     return v;
+}
+
+void writeToNewCSV(const string& filename, int vectorSize, vector<double> v)
+{
+    std::ofstream myFile(filename);
+
+    myFile << "Vector Size, Runtime"<<endl;
+
+    for (int i=0; i<v.size(); i++)
+    {
+        myFile << vectorSize << ", " << v[i]<<endl;
+    }
 }
 
 void displayStats(vector<double> v)                                //pass by value because don't need to change vector
@@ -171,7 +186,7 @@ void testSorts()
 
     for (int i=0; i < number_test_vectors; i++)
     {
-        vectorsList.push_back(randomVector(5, 0, 100));         //generates the master list of random vectors that all the sorts are tested with
+        vectorsList.push_back(randomVector(100, 0, 100));         //generates the master list of random vectors that all the sorts are tested with
     }
 
     cout<<"\n********************************************************************************"<<endl<<"Testing Bubble Sort on "<<number_test_vectors<<" vectors of length 100"<<endl;
@@ -242,6 +257,7 @@ void testSorts()
 
     cout<<std::boolalpha<<"Sorting successful: "<<selectionSortSuccessful<<endl;
     displayStats(selectionResults);
+    writeToNewCSV("Selection Results.csv", 100, selectionResults);
     cout<<"********************************************************************************"<<endl;
 
 
@@ -284,6 +300,7 @@ int main()
     {
         case 1: 
             cout<<"running case 1"<<endl;
+            ofstream 
             break;
 
         case 2: 
