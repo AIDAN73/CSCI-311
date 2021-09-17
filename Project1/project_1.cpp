@@ -1,13 +1,15 @@
+#include <chrono>
 #include <iostream>
 #include <vector>
 #include <time.h>
 #include <math.h>
-#include <chrono>
 #include <fstream>
 using namespace std; 
 using namespace std::chrono;
+int testNumber=0;
 
 static const char*  star_line= "********************************************************************************"; 
+
 
 bool isSorted(const vector<int> &v) //checks whether a given vector is properly sorted
 {
@@ -46,7 +48,27 @@ vector<int> randomVector(int size, int low, int high)
     return v;
 }
 
-void writeToNewCSV(const string& filename, int vectorSize, vector<double> v)
+vector<int> sortedVector(int size)
+{
+    vector<int> v;
+    for(int i=0; i<size; i++)
+    {
+        v.push_back(i);
+    }
+    return v;
+}
+
+vector<int> reverseSortedVector(int size)
+{
+    vector<int> v;
+    for(int i=size; i>0; i--)
+    {
+        v.push_back(i);
+    }
+    return v;
+}
+
+void writeToCSV(const string& filename, int vectorSize, vector<double> v)
 {
     std::ofstream myFile(filename);
 
@@ -58,7 +80,7 @@ void writeToNewCSV(const string& filename, int vectorSize, vector<double> v)
     }
 }
 
-void displayStats(vector<double> v)                                //pass by value because don't need to change vector
+void displayStats(vector<double> &v)                                
 {
     double min=v[0];
     float mean;
@@ -171,9 +193,6 @@ vector<int> quickSort(vector<int> &v)
 
 }
 
-
-
-
 void testSorts()
 {
     int number_test_vectors = 10;                               //holds the amount of test vectors, 10
@@ -189,7 +208,7 @@ void testSorts()
         vectorsList.push_back(randomVector(100, 0, 100));         //generates the master list of random vectors that all the sorts are tested with
     }
 
-    cout<<"\n********************************************************************************"<<endl<<"Testing Bubble Sort on "<<number_test_vectors<<" vectors of length 100"<<endl;
+    cout<<"\n"<<star_line<<endl<<"Testing Bubble Sort on "<<number_test_vectors<<" vectors of length 100"<<endl;
     bool bubbleSortSuccessful = true;                               //holds whether everything's sorted successfully
     for (int i=0; i<number_test_vectors; i++)
     {
@@ -210,7 +229,7 @@ void testSorts()
 
     cout<<std::boolalpha<<"Sorting successful: "<<bubbleSortSuccessful<<endl;
     displayStats(bubbleResults);
-    cout<<"********************************************************************************"<<endl;
+    cout<<star_line<<endl;
 
 
     cout<<"Testing Insertion Sort on "<<number_test_vectors<<" vectors of length 100"<<endl;
@@ -233,7 +252,7 @@ void testSorts()
     }
     cout<<std::boolalpha<<"Sorting successful: "<<insertionSortSuccessful<<endl;
     displayStats(insertionResults);
-    cout<<"********************************************************************************"<<endl;
+    cout<<star_line<<endl;
 
 
     cout<<"Testing Selection Sort on "<<number_test_vectors<<" vectors of length 100"<<endl;
@@ -257,8 +276,8 @@ void testSorts()
 
     cout<<std::boolalpha<<"Sorting successful: "<<selectionSortSuccessful<<endl;
     displayStats(selectionResults);
-    writeToNewCSV("Selection Results.csv", 100, selectionResults);
-    cout<<"********************************************************************************"<<endl;
+    //writeToNewCSV("Selection Results.csv", 100, selectionResults);
+    cout<<star_line<<endl;
 
 
 
@@ -283,10 +302,114 @@ cout<<"Testing Quick Sort on "<<number_test_vectors<<" vectors of length 100"<<e
 
     cout<<std::boolalpha<<"Sorting successful: "<<quickSortSuccessful<<endl;
     displayStats(quickResults);
-    cout<<"********************************************************************************"<<endl;
-
-    
+    cout<<star_line<<endl; 
 }
+
+void runTest(int sortType, string outputFile, vector<vector<int>> &vectorsList)
+{
+    testNumber++;
+    std::ofstream file(outputFile.c_str());                              //creates the output file
+    file << "Size, Runtime"<<endl;                               //sets up a CSV
+
+    for(int i=0; i<vectorsList.size(); i++)
+    {
+        vector<int> testVector = vectorsList[i];                //makes a copy of the current testing vector from master list
+
+        auto start = chrono::high_resolution_clock::now();                                              //start clock
+
+        switch (sortType)                                           //sort the copy based with whichever selected sort. Technically influences the timer, but this will be negligible
+        {
+            case 0:
+                testVector = bubbleSort(testVector);
+                break;
+            case 1: 
+                testVector = insertSort(testVector);
+                break; 
+            case 2: 
+                testVector = selectSort(testVector);
+                break; 
+            case 3: 
+                testVector = quickSort(testVector);
+                break; 
+        }
+        auto end = chrono::high_resolution_clock::now();                                                //stop clock
+        double elapsed = chrono::duration_cast< chrono::duration<double> > (end-start).count();         //find difference in time
+        file << testVector.size() << ", " << elapsed << endl;                                           //writes the results of this test to CSV 
+        cout<<"Finished vector "<<i<<" of 250"<< " in test " << testNumber << " of 12" << endl;
+    }
+}
+
+
+
+/*
+    This function, by the end, will generate 50 vectors for each combination of size (10, 100, 1000, 10000, 100000), algorithm (bubble, insert, select, quick), and case (worst, random, best), 
+    test each combination, and record the results to 12 result CSV files. Each file contains one combination of algorithm and case, with all 250 vectors of various sizes. 
+
+    The general structure of this is to generate a master list of vectors (ex: all the random vectors, all the presorted vectors). Then that master list (along with the file to store the data at) is passed to 
+    the test functions to gather data. 
+     
+*/
+void collectData()
+{
+    int currentTest = 1;
+
+    vector<vector<int>> vectorsList;
+
+
+    //start with all the random sorts
+    for(int i=10; i<=10000; i=i*10)                    //10, 100, 1000, 10000
+    {
+        for(int j=0; j<50; j++)                         //pushes 50 vectors
+        {
+            vectorsList.push_back(randomVector(i, 0, 100));      //vectorsList now has 200 of the 250 vectors needed
+        }   
+    }
+    //for (int i=0; i<50; i++)    vectorsList.push_back(randomVector(20000, 0, 100));      //vectorsList now has all 250
+
+    cout<<vectorsList.size();
+
+    runTest(0, "bubbleRandom", vectorsList);                            //test each algorithm on the same random vectors
+    runTest(1, "insertRandom", vectorsList);
+    runTest(2, "selectRandom", vectorsList);                    
+    runTest(3, "quickRandom", vectorsList);
+
+    vectorsList.clear();                                                  //we're done with random vectors, clear the list for reuse
+
+    //test presorted arrays
+    for(int i=10; i<=10000; i=i*10)                    //10, 100, 1000, 10000
+    {
+        for(int j=0; j<50; j++)                         //pushes 50 vectors
+        {
+            vectorsList.push_back(sortedVector(i));      //vectorsList now has 200 of the 250 vectors needed
+        }   
+    }
+    //for (int i=0; i<50; i++)    vectorsList.push_back(sortedVector(20000));      //vectorsList now has all 250
+
+    runTest(0, "bubbleBest", vectorsList);                      //bubble and insert's best case is presorted, at O(n)
+    runTest(1, "insertBest", vectorsList);
+    runTest(2, "selectBest", vectorsList);                      //presorted is *technically* select's best case, but only by a single assignment of uMin. It'll always be O(n^2)
+    runTest(3, "quickWorst", vectorsList);                      //presorted is quick's worst case because n never gets divided by 2, only reduced by 1
+
+    vectorsList.clear();
+
+    //test reverse sorted arrays
+    for(int i=10; i<=10000; i=i*10)                    //10, 100, 1000, 10000
+    {
+        for(int j=0; j<50; j++)                         //pushes 50 vectors
+        {
+            vectorsList.push_back(reverseSortedVector(i));      //vectorsList now has 200 of the 250 vectors needed
+        }   
+    }
+    //for (int i=0; i<50; i++)    vectorsList.push_back(reverstSortedVector(20000));      //vectorsList now has all 250
+
+    runTest(0, "bubbleWorst", vectorsList);                      //bubble and insert's worst case is reverse sorted, because they have to run both loops all the time
+    runTest(1, "insertWorst", vectorsList);
+    runTest(2, "selectWorst", vectorsList);                      //presorted is *technically* select's best case, but only by a single assignment. It'll always be O(n^2)
+
+
+}
+
+
 
 int main()
 {
@@ -299,8 +422,7 @@ int main()
     switch (question)
     {
         case 1: 
-            cout<<"running case 1"<<endl;
-            ofstream 
+            collectData();
             break;
 
         case 2: 
