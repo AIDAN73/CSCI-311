@@ -191,6 +191,8 @@ vector<int> quickSort(vector<int> &v)
 
 }
 
+//tests the sorts and displays some info about the runtimes of a single input size
+//tests all the algorithms with the same master list
 void testSorts()
 {
     int number_test_vectors = 10;                               //holds the amount of test vectors, 10
@@ -303,6 +305,8 @@ cout<<"Testing Quick Sort on "<<number_test_vectors<<" vectors of length 100"<<e
     cout<<star_line<<endl; 
 }
 
+//sorts the inputted 2d vector with the specified sorting algorithm, and saves the input size vs runtime data in a CSV with the given name
+//0=bubble, 1=insert, 2=select, 3=quick
 void runTest(int sortType, string outputFile, vector<vector<int>> &vectorsList)
 {
     testNumber++;
@@ -316,7 +320,7 @@ void runTest(int sortType, string outputFile, vector<vector<int>> &vectorsList)
         auto start = chrono::high_resolution_clock::now();                                              //start clock
 
         switch (sortType)                                           //sort the copy based with whichever selected sort. Technically influences the timer, but this will be negligible
-        {
+        {                                                           //at even fairly small vector sizes, and it's so useful for code reuse
             case 0:
                 testVector = bubbleSort(testVector);
                 break;
@@ -333,7 +337,7 @@ void runTest(int sortType, string outputFile, vector<vector<int>> &vectorsList)
         auto end = chrono::high_resolution_clock::now();                                                //stop clock
         double elapsed = chrono::duration_cast< chrono::duration<double> > (end-start).count();         //find difference in time
         file << testVector.size() << ", " << elapsed << endl;                                           //writes the results of this test to CSV 
-        cout<<"Finished vector "<<i<<" of 250"<< " in test " << testNumber << " of 12" << endl;
+        cout<<"Finished vector "<<i<<" of 250"<< " in test " << testNumber << " of 12" << endl;         //so I don't lose my mind waiting with no feedback
     }
 }
 
