@@ -364,14 +364,28 @@ void collectData()
             vectorsList.push_back(randomVector(i, 0, 100));      //vectorsList now has 200 of the 250 vectors needed
         }   
     }
-    //for (int i=0; i<50; i++)    vectorsList.push_back(randomVector(20000, 0, 100));      //vectorsList now has all 250
+    for (int i=0; i<50; i++)    vectorsList.push_back(randomVector(40000, 0, 100));      //vectorsList now has all 250
 
-    cout<<vectorsList.size();
 
-    runTest(0, "bubbleRandom", vectorsList);                            //test each algorithm on the same random vectors
-    runTest(1, "insertRandom", vectorsList);
-    runTest(2, "selectRandom", vectorsList);                    
-    runTest(3, "quickRandom", vectorsList);
+    runTest(0, "bubbleRandom.csv", vectorsList);                            //test each algorithm on the same random vectors
+    runTest(1, "insertRandom.csv", vectorsList);
+    runTest(2, "selectRandom.csv", vectorsList);                    
+    runTest(3, "quickRandom.csv", vectorsList);
+
+    vectorsList.clear();                                                  //we're done with random vectors, clear the list for reuse
+
+    //new set of random vectors for quickBest
+    for(int i=10; i<=10000; i=i*10)                    //10, 100, 1000, 10000
+    {
+        for(int j=0; j<50; j++)                         //pushes 50 vectors
+        {
+            vectorsList.push_back(randomVector(i, 0, 100));      //vectorsList now has 200 of the 250 vectors needed
+        }   
+    }
+    for (int i=0; i<50; i++)    vectorsList.push_back(randomVector(40000, 0, 100));      //vectorsList now has all 250
+
+    runTest(3, "quickBest.csv", vectorsList);                               //random is quicksort's best case
+
 
     vectorsList.clear();                                                  //we're done with random vectors, clear the list for reuse
 
@@ -383,12 +397,12 @@ void collectData()
             vectorsList.push_back(sortedVector(i));      //vectorsList now has 200 of the 250 vectors needed
         }   
     }
-    //for (int i=0; i<50; i++)    vectorsList.push_back(sortedVector(20000));      //vectorsList now has all 250
+    for (int i=0; i<50; i++)    vectorsList.push_back(sortedVector(40000));      //vectorsList now has all 250
 
-    runTest(0, "bubbleBest", vectorsList);                      //bubble and insert's best case is presorted, at O(n)
-    runTest(1, "insertBest", vectorsList);
-    runTest(2, "selectBest", vectorsList);                      //presorted is *technically* select's best case, but only by a single assignment of uMin. It'll always be O(n^2)
-    runTest(3, "quickWorst", vectorsList);                      //presorted is quick's worst case because n never gets divided by 2, only reduced by 1
+    runTest(0, "bubbleBest.csv", vectorsList);                      //bubble and insert's best case is presorted, at O(n)
+    runTest(1, "insertBest.csv", vectorsList);
+    runTest(2, "selectBest.csv", vectorsList);                      //presorted is *technically* select's best case, but only by a single assignment of uMin. It'll always be O(n^2)
+    runTest(3, "quickWorst.csv", vectorsList);                      //presorted is quick's worst case because n never gets divided by 2, only reduced by 1
 
     vectorsList.clear();
 
@@ -400,13 +414,11 @@ void collectData()
             vectorsList.push_back(reverseSortedVector(i));      //vectorsList now has 200 of the 250 vectors needed
         }   
     }
-    //for (int i=0; i<50; i++)    vectorsList.push_back(reverstSortedVector(20000));      //vectorsList now has all 250
+    for (int i=0; i<50; i++)    vectorsList.push_back(reverseSortedVector(40000));      //vectorsList now has all 250
 
-    runTest(0, "bubbleWorst", vectorsList);                      //bubble and insert's worst case is reverse sorted, because they have to run both loops all the time
-    runTest(1, "insertWorst", vectorsList);
-    runTest(2, "selectWorst", vectorsList);                      //presorted is *technically* select's best case, but only by a single assignment. It'll always be O(n^2)
-
-
+    runTest(0, "bubbleWorst.csv", vectorsList);                      //bubble and insert's worst case is reverse sorted, because they have to run both loops all the time
+    runTest(1, "insertWorst.csv", vectorsList);
+    runTest(2, "selectWorst.csv", vectorsList);                      //presorted is *technically* select's best case, but only by a single assignment. It'll always be O(n^2)
 }
 
 
