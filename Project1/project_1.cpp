@@ -10,8 +10,8 @@ int testNumber=0;
 
 static const char*  star_line= "********************************************************************************"; 
 
-
-bool isSorted(const vector<int> &v) //checks whether a given vector is properly sorted
+//checks whether a given vector is properly sorted
+bool isSorted(const vector<int> &v) 
 {
     for (int i=0; i<v.size()-1; i++)
     {
@@ -20,7 +20,8 @@ bool isSorted(const vector<int> &v) //checks whether a given vector is properly 
     return true;
 }
 
-void displayIntVector(const vector<int> &v)        //displays all values in vector, with endl after
+//displays all values in vector, with endl after
+void displayIntVector(const vector<int> &v)        
 {
     for (int i=0; i<v.size(); i++)
     {
@@ -29,6 +30,7 @@ void displayIntVector(const vector<int> &v)        //displays all values in vect
     cout<<endl;
 }
 
+//needed one that would take a double vector for the timing data
 void displayDoubleVector(const vector<double> &v)
 {
     for (int i=0; i<v.size(); i++)
@@ -38,6 +40,7 @@ void displayDoubleVector(const vector<double> &v)
     cout<<endl;
 }
 
+//generates a random vector of a given size, with values ranging begween low and high
 vector<int> randomVector(int size, int low, int high)
 {
     vector<int> v(size, 0);
@@ -48,6 +51,7 @@ vector<int> randomVector(int size, int low, int high)
     return v;
 }
 
+//generates a presorted list like [0,1,2,3,4...] of a given size, used for best and worst cases
 vector<int> sortedVector(int size)
 {
     vector<int> v;
@@ -58,6 +62,7 @@ vector<int> sortedVector(int size)
     return v;
 }
 
+//generates a reverse sorted list like [...,5,4,3,2,1,0] of a given size, used for worst cases
 vector<int> reverseSortedVector(int size)
 {
     vector<int> v;
@@ -68,18 +73,7 @@ vector<int> reverseSortedVector(int size)
     return v;
 }
 
-void writeToCSV(const string& filename, int vectorSize, vector<double> v)
-{
-    std::ofstream myFile(filename);
-
-    myFile << "Vector Size, Runtime"<<endl;
-
-    for (int i=0; i<v.size(); i++)
-    {
-        myFile << vectorSize << ", " << v[i]<<endl;
-    }
-}
-
+//processes a time results vector from the testSorts call. Displays the minimum, mean, standard deviation, and maximum
 void displayStats(vector<double> &v)                                
 {
     double min=v[0];
@@ -107,6 +101,7 @@ void displayStats(vector<double> &v)
     cout<<"Minimum: "<<min<<"\tMean: "<<mean<<"\tStDev: "<<stDev<<"\tMaximum: "<<max<<endl;
 }
 
+//bubble sort vector, as detailed by pseudocode in class
 vector<int> bubbleSort(vector<int> &v)
 {
     int temp;
@@ -130,6 +125,7 @@ vector<int> bubbleSort(vector<int> &v)
     return v; 
 }
 
+//insert sort vector, as detailed by pseudocode in class
 vector<int> insertSort(vector<int> &v)
 {
     int temp;
@@ -150,6 +146,7 @@ vector<int> insertSort(vector<int> &v)
     return v;
 }
 
+//select sort vector, as detailed by pseudocode in class
 vector<int> selectSort(vector<int> &v)
 {
     int uMin;
@@ -168,6 +165,7 @@ vector<int> selectSort(vector<int> &v)
     return v;
 }
 
+//quick sort vector, as detailed by pseudocode in class
 vector<int> quickSort(vector<int> &v)
 {
     if (v.size() <= 1) return v;
