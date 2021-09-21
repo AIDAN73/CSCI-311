@@ -75,7 +75,7 @@ vector<int> merge(vector<int> &A, vector<int> &B)
         }
     }
 
-    if (A.size()>0) C.insert(C.end(), A.begin(), A.end());                      //one of the vectors will have leftovers. Add it
+    if (A.size()>0) C.insert(C.end(), A.begin(), A.end());                      //one of the vectors will have leftovers. Add it to the answer vector
     else if (B.size()>0) C.insert(C.end(), B.begin(), B.end());
 
     return C; 
@@ -86,9 +86,9 @@ vector<int> merge(vector<int> &A, vector<int> &B)
 //if a vector has 1 or less values, it's sorted. Otherwise, it splits the vector into halves, sorts those halves, and merges the sorted halves together
 vector<int> mergeSort(const vector<int> &v)
 {
-    if (v.size() <= 1) return v;
+    if (v.size() <= 1) return v;            //if it's smaller than 2, it's sorted 
 
-    int middle = v.size()/2;
+    int middle = v.size()/2;                //this whole section with the two for loops just divides the vector evenly into A and B
     vector<int> A;
     vector<int> B;
     for (int i=0; i<middle; i++)
@@ -100,10 +100,10 @@ vector<int> mergeSort(const vector<int> &v)
         B.push_back(v[i]);
     }
 
-    A = mergeSort(A); 
-    B = mergeSort(B); 
+    A = mergeSort(A);               //sort the first half
+    B = mergeSort(B);               //sort the second half
 
-    return merge(A,B);
+    return merge(A,B);              //merge the sorted halves
 }
 
 
