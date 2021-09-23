@@ -10,7 +10,7 @@ using namespace std;
 
 BST::BST()
 {
-
+    root = nullptr;
 }
 
 BST::~BST()
@@ -54,12 +54,37 @@ Node* BST::maximum(Node* n)
 
 void BST::insertValue(int val)
 {
-
+    if(root==nullptr)   root = new Node(val);
+    else 
+    {
+        if (val < root->value)
+        {
+            root->left = insertValue(root->left, val);
+        }
+        else
+        {
+            root->right = insertValue(root->right, val);
+        }
+    }
+    
 }
 
 Node* BST::insertValue(Node* n, int val)
 {
-	return nullptr;
+	if (n == nullptr) n = new Node(val);
+
+    else 
+    {
+        if (val < root->value)
+        {
+            root->left = insertValue(n->left, val);
+        }
+        else
+        {
+            root->right = insertValue(n->right, val);
+        }
+    }
+    return n;
 }
 
 void BST::deleteValue(int val)
@@ -75,8 +100,8 @@ Node* BST::deleteValue(Node* n, int val)
 bool BST::isBST(Node* n)
 {
 	if (n == nullptr) return true;
-	if (n->left->value > n->value) return false;
-	if (n->right->value < n->value) return false;
+	if ((n->left != nullptr) && n->left->value > n->value) return false;
+	if ((n->right != nullptr) && n->right->value < n->value) return false;
 
 	return (isBST(n->left)) && (isBST(n->right));
 }
