@@ -40,16 +40,18 @@ Node* BST::search(Node* n, int target)
 	return nullptr;
 }
 
+//finds the minimum of a tree, iteratively rather than recursively 
 Node* BST::minimum()
 {	
-    Node* current = root;
-    while (current->left != nullptr)
+    Node* current = root;				//traveler
+    while (current->left != nullptr)	//send it all the way left, stop before you go past the leaf	
     {
         current = current->left;
     }	
-  	return current;
+  	return current;		//got it
 }
 
+//same as above, but can be used for a specific subtree by passing in a starting node
 Node* BST::minimum(Node* n)
 {
     while (n->left != nullptr)
@@ -59,16 +61,18 @@ Node* BST::minimum(Node* n)
   	return n;
 }
 
+//finds the maximum node of a tree iteratively
 Node* BST::maximum()
 {
-  	Node* current = root;
-    while (current->right != nullptr)
+  	Node* current = root;				//traveler
+    while (current->right != nullptr)	//send it all the way right, stop before you go past the leaf
     {
-        current = current->right;
+        current = current->right;	
     }	
-  	return current;
+  	return current;						//found it
 }
 
+//same as above, but can be used for a specific subtree by passing in a starting node
 Node* BST::maximum(Node* n)
 {
     while (n->right != nullptr)
@@ -118,41 +122,29 @@ Node* BST::insertValue(Node* n, int val)
     return n;												//returns the given node (updated or not) so that the tree retains its structure
 }
 
+//deletes a given value in a tree
 void BST::deleteValue(int val)
 {
-	if (root != nullptr)
+	if (root != nullptr)															//don't do anything if the tree is empty
 	{
-		//cout<<"root isn't null"<<endl;
-		if (root->value > val) root->left = deleteValue(root->left, val);
-		else if (root->value < val) root->right = deleteValue(root->right, val); 
+		if (root->value > val) root->left = deleteValue(root->left, val);			//call itself on the left or right tree until it finds the value
+		else if (root->value < val) root->right = deleteValue(root->right, val); 	//updates the child with the return from the recursive call
 
-		else if (root->left==nullptr && root->right==nullptr) 
-		{
-			root = nullptr;
-			//cout<<"no children"<<endl;
-		}
-		else if (root->left==nullptr && root->right!=nullptr) 
-		{
-			root = root->right;
-			//cout<<"right child"<<endl;
-		}
-		else if (root->left!=nullptr && root->right==nullptr) 
-		{
-			root = root->left;
-			//cout<<"left child"<<endl;
-		}
+		else if (root->left==nullptr && root->right==nullptr) root = nullptr;		//if no children, just delete the root
+		else if (root->left==nullptr && root->right!=nullptr) root = root->right;	//if it has one child, replace the root with the child
+		else if (root->left!=nullptr && root->right==nullptr) root = root->left;	
 
-		else 
+		else 		//it has two children
 		{
-			//cout<<"it got to the else"<<endl;
-			Node* replacement = minimum(root->right);
-			root->value = replacement->value;
-			root->right = deleteValue(root->right, replacement->value);
+			Node* replacement = minimum(root->right);						//find the value closest to the root in the right subtree
+			root->value = replacement->value;								//replace the value, but keep the children
+			root->right = deleteValue(root->right, replacement->value);		//delete the now redundant 'closest value'
 		}
 	}
 
 }
 
+//same logic as above. Structured this way so user doesn't have to input the root every time. This can be used to delete a node in a specific subtree
 Node* BST::deleteValue(Node* n, int val)
 {
 	if (n != nullptr)
@@ -160,11 +152,7 @@ Node* BST::deleteValue(Node* n, int val)
 		if (n->value > val) n->left = deleteValue(n->left, val);
 		else if (n->value < val) n->right = deleteValue(n->right, val); 
 
-		else if (n->left==nullptr && n->right==nullptr) 
-		{
-			n=nullptr;
-			//cout<<"leaf!"<<endl;
-		}
+		else if (n->left==nullptr && n->right==nullptr) n=nullptr;
 		else if (n->left==nullptr && n->right!=nullptr) n = n->right;
 		else if (n->left!=nullptr && n->right==nullptr) n = n->left;
 
@@ -175,7 +163,7 @@ Node* BST::deleteValue(Node* n, int val)
 			n->right = deleteValue( n->right, replacement->value);
 		}
 	}
-	return n;
+	return n; 		//return the child, whether it was updated or not
 }
 
 //checks if a BST is actually a BST, returning a boolean. Rules are that if a left child is larger or a right child is smaller than a parent, it's not a binary search tree
@@ -227,6 +215,9 @@ void BST::postOrder(Node* n, vector<Node*> &order)
 }
 
 
+
+//attempt at an iterative deleteValue function. Seemed like a good idea, but ran into a lot of troubles. I could change a node, but couldn't affect its parent's links. Abandoned it 
+//for the algorithm discussed in class. Still has a bunch of debugging statements in there
 
 /*
 
