@@ -1,28 +1,22 @@
-9c9
-< 170 63 159 
----
+7a8,29
+> PREORDER
 > 159 63 170 
-11c11
-< 0
----
+> SIZE
 > 3
-14c14
-< 63 159 
----
+> DELETE 170
+> PREORDER
 > 159 63 
-16c16
-< 0
----
+> SIZE
 > 2
-22c22
-< 152 159 63 
----
+> INSERT 152
+> INORDER
+> 63 152 159 
+> INSERT 152
+> POSTORDER
 > 63 159 152 
-24c24
-< 0
----
+> SIZE
 > 4
-25a26,29
+> DELETE 152
 > POSTORDER
 > 63 159 
 > SIZE
