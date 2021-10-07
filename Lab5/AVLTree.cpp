@@ -20,9 +20,9 @@ int AVLTree::getSize()          {return size;}
 
 AVLNode* AVLTree::search(int val)
 {
-    if (root == nullptr) return nullptr;								//this BST is empty, it doesn't even have a root. There's nothing here. Stop looking.
+    if (root == nullptr) return nullptr;								//this tree is empty, it doesn't even have a root. There's nothing here. Stop looking.
 	if (root->value == val) return root;								//wow, the target was right at the top
-	if (root->value > val) return search(root->left, val);		//if the target is less than, search left, and vice versa
+	if (root->value > val) return search(root->left, val);		        //if the target is less than the current node search left, and vice versa
 	if (root->value < val) return search(root->right, val);
     return nullptr;
 }
@@ -36,9 +36,10 @@ AVLNode* AVLTree::search(AVLNode* n, int val)
 	return nullptr;
 }
 
-AVLNode* AVLTree::minimum()
+//sends a traveler all the way down the left side and then returns the last (smallest) node
+AVLNode* AVLTree::minimum()                                         
 {
-    AVLNode* traveler = root;
+    AVLNode* traveler = root;                                       
     while (traveler->left != nullptr)
     {
         traveler = traveler->left;
@@ -46,7 +47,8 @@ AVLNode* AVLTree::minimum()
     return traveler;
 }
 
-AVLNode* AVLTree::minimum(AVLNode* n)
+//like the above, but can be used to find the minimum of a subtree by passing in the root
+AVLNode* AVLTree::minimum(AVLNode* n)                               
 {
     AVLNode* traveler = n;
     while (traveler->left != nullptr)
@@ -56,7 +58,8 @@ AVLNode* AVLTree::minimum(AVLNode* n)
     return traveler;
 }
 
-AVLNode* AVLTree::maximum()
+//sends a traveler all the way down the left side and then returns the last (largest) node
+AVLNode* AVLTree::maximum()                                     
 {
     AVLNode* traveler = root;
     while (traveler->right != nullptr)
@@ -66,6 +69,7 @@ AVLNode* AVLTree::maximum()
     return traveler;
 }
 
+//like the above, but can be used to find the maximum of a subtree by passing in the root
 AVLNode* AVLTree::maximum(AVLNode* n)
 {
     
@@ -77,49 +81,53 @@ AVLNode* AVLTree::maximum(AVLNode* n)
     return traveler;
 }
 
+//returns the integer height of a node
 int getHeight(AVLNode* n)
 {
-    if(n->left == nullptr && n->right == nullptr) return 0;
-    else if(n->right == nullptr) return getHeight(n->left)+1;
-    else if(n->left ==nullptr) return getHeight(n->right)+1;
-    else return max(n->left->height, n->right->height)+1;
+    if(n->left == nullptr && n->right == nullptr) return 0;         //it is a leaf, which has a height of 0
+    else if(n->right == nullptr) return n->left->height + 1;        //it has one child, so the height is the child's height plus one
+    else if(n->left ==nullptr) return n->right->height + 1;
+    else return max(n->left->height, n->right->height) + 1;         //it has two children, so the height is the larger of the children's heights plus one
 }
 
+//returns the balance factor of a node (height of right child - height of right child)
 int getBalanceFactor(AVLNode* n) 
 {
-    int right;
+    int right;          //need to use variables to avoid trying to access nullpointer heights and segfaulting
     int left;
 
-    if(n->left == nullptr) left = -1;
-    else left = n->left->height;
+    if(n->left == nullptr) left = -1;       //if there's no child, that side's height is -1
+    else left = n->left->height;            //if there is a child, that's the side's height
 
     if(n->right == nullptr) right = -1;
     else right = n->right->height;
 
-    return right - left;
+    return right - left;                    
 }
 
+//insert function used by the driver. rebalances the tree after inserting a new node with the inputted value. Does not insert repeat values
 void AVLTree::insertValue(int val)
 {
-    if (root == nullptr)  
+    if (root == nullptr)                //if the tree's empty go ahead and insert there
     {
         root = new AVLNode(val);
         size++;
     }
 
-    else if(root->value == val) return;
+    else if(root->value == val) return;     //don't insert repeats. Do not rebalance, do not collect 200$
 
     else 
     {
-        if (val < root->value) root->left = insertValue(root->left, val);
+        if (val < root->value) root->left = insertValue(root->left, val);       //navigate recursively to spot to insert
         else root->right = insertValue(root->right, val);
     }
 
-    root->height = getHeight(root);
+    root->height = getHeight(root);                         //rebalance the tree
     root->balanceFactor = getBalanceFactor(root);
     root = rebalance(root);
 }
 
+//recursive function called by the function above. Inserts a value after the node inputted
 AVLNode* AVLTree::insertValue(AVLNode* n, int val)
 {
     if (n == nullptr) 
@@ -143,6 +151,7 @@ AVLNode* AVLTree::insertValue(AVLNode* n, int val)
     return n;
 }
 
+//deletes a node with the inputted value and rebalances the tree afterward. This is the function called by the driver
 void AVLTree::deleteValue(int val)
 {
     if (root != nullptr)
@@ -173,18 +182,19 @@ void AVLTree::deleteValue(int val)
 			root->right = deleteValue(root->right, replacement->value);		//delete the now redundant 'closest value'
         }
     }
-    if (root==nullptr) return;
+    if (root==nullptr) return;                              //if we reached the end of the list or a leaf got deleted, stop here
 
-    root->height = getHeight(root);
+    root->height = getHeight(root);                         //rebalance and update heights and balance factors
     root->balanceFactor = getBalanceFactor(root);
     root = rebalance(root);
 }
 
+//deletes a node with the inputted value and rebalances the tree afterward. This is the recursive function called by the function above
 AVLNode* AVLTree::deleteValue(AVLNode* n, int val)
 {
     if (n != nullptr)
     {
-        if (val < n->value) n->left = deleteValue(n->left, val);
+        if (val < n->value) n->left = deleteValue(n->left, val);                //see directly above
         else if (val > n->value) n->right = deleteValue(n->right, val);
 
         else if (n->right==nullptr && n->left==nullptr) 
@@ -218,22 +228,24 @@ AVLNode* AVLTree::deleteValue(AVLNode* n, int val)
     return n;
 }
 
+//rebalances the AVLTree after insertions and deletions
 AVLNode* AVLTree::rebalance(AVLNode* n)
 {
-    if (n->balanceFactor == 2)
+    if (n->balanceFactor == 2)          //the right node is too tall
     {
-        if (n->right->balanceFactor > 0) return rotateLeft(n);
+        if (n->right->balanceFactor >= 0) return rotateLeft(n);
         else if (n->right->balanceFactor < 0) return rotateRightLeft(n);
     }
-    else if(n->balanceFactor == -2)
+    else if(n->balanceFactor == -2)     //the left node is too tall
     {
-        if (n->left->balanceFactor < 0) return rotateRight(n);
-        else if (n->left->balanceFactor > 0) return rotateLeftRight(n);
+        if (n->left->balanceFactor <= 0) return rotateRight(n);             //left node's left node is taller
+        else if (n->left->balanceFactor > 0) return rotateLeftRight(n);     //left node's right node is taller
     }
 
     return n;
 }
 
+//rotation algorithms as explained by slides
 AVLNode* AVLTree::rotateLeft(AVLNode* y)
 {
     AVLNode* x = y->right;
@@ -292,7 +304,7 @@ void AVLTree::preOrder(AVLNode* n, vector<AVLNode*> &order)
 {
     if (n != nullptr)									//don't try to display an empty node
 	{
-		order.push_back(n);
+		order.push_back(n);                                 
 		AVLTree::preOrder(n->left, order);					//then call it on the left and then the right
 		AVLTree::preOrder(n->right, order);
 	}
