@@ -29,7 +29,7 @@ AVLNode* AVLTree::search(int val)
 
 AVLNode* AVLTree::search(AVLNode* n, int val)
 {
-    if (n==nullptr) return nullptr;										//you have gone past a leaf. Stop looking. 
+    if (n==nullptr) return nullptr;									//you have gone past a leaf. Stop looking. 
 	if (n->value == val) return n;									//we found it!!!
 	if (n->value > val) return search(n->left, val);				//see function above
 	if (n->value < val) return search(n->right, val);
@@ -38,34 +38,51 @@ AVLNode* AVLTree::search(AVLNode* n, int val)
 
 AVLNode* AVLTree::minimum()
 {
-    if (root == nullptr || root->left == nullptr) return root;
-    else return minimum(root->left);
+    AVLNode* traveler = root;
+    while (traveler->left != nullptr)
+    {
+        traveler = traveler->left;
+    }
+    return traveler;
 }
 
 AVLNode* AVLTree::minimum(AVLNode* n)
 {
-    if (n->left == nullptr) return n;
-    else return minimum(n->left);
+    AVLNode* traveler = n;
+    while (traveler->left != nullptr)
+    {
+        traveler = traveler->left;
+    }
+    return traveler;
 }
 
 AVLNode* AVLTree::maximum()
 {
-    if (root == nullptr || root->right == nullptr) return root;
-    else return maximum(root->right);
+    AVLNode* traveler = root;
+    while (traveler->right != nullptr)
+    {
+        traveler = traveler->right;
+    }
+    return traveler;
 }
 
 AVLNode* AVLTree::maximum(AVLNode* n)
 {
-    if (n->right == nullptr) return n;
-    else return minimum(n->right);
+    
+    AVLNode* traveler = n;
+    while (traveler->right != nullptr)
+    {
+        traveler = traveler->right;
+    }
+    return traveler;
 }
 
 int getHeight(AVLNode* n)
 {
     if(n->left == nullptr && n->right == nullptr) return 0;
-    else if(n->left !=nullptr && n->right == nullptr) return getHeight(n->left)+1;
-    else if(n->left ==nullptr && n->right != nullptr) return getHeight(n->right)+1;
-    else return max(getHeight(n->left), getHeight(n->right))+1;
+    else if(n->right == nullptr) return getHeight(n->left)+1;
+    else if(n->left ==nullptr) return getHeight(n->right)+1;
+    else return max(n->left->height, n->right->height)+1;
 }
 
 int getBalanceFactor(AVLNode* n) 
@@ -74,10 +91,10 @@ int getBalanceFactor(AVLNode* n)
     int left;
 
     if(n->left == nullptr) left = -1;
-    else left = getHeight(n->left);
+    else left = n->left->height;
 
     if(n->right == nullptr) right = -1;
-    else right = getHeight(n->right);
+    else right = n->right->height;
 
     return right - left;
 }
@@ -133,9 +150,22 @@ void AVLTree::deleteValue(int val)
         if (val < root->value) root->left = deleteValue(root->left, val);               //navigate to the thing we want to delete
         else if (val > root->value) root->right = deleteValue(root->right, val);
 
-        else if (root->right==nullptr && root->left==nullptr) root = nullptr;           //no children, just set to null
-        else if (root->left==nullptr) root = root->right;                               //one child, replace with child
-        else if (root->right==nullptr) root = root->left;
+        else if (root->right==nullptr && root->left==nullptr)                           //no children, just set to null
+        {
+            root = nullptr;           
+            size--;
+        }
+        else if (root->left==nullptr)                                                  //one child, replace with child
+        {
+            root = root->right;
+            size--;
+        }
+        else if (root->right==nullptr) 
+        {
+            root = root->left;
+            size--;
+        }
+
         else 
         {
             AVLNode* replacement = minimum(root->right);					//find the value closest to the root in the right subtree
@@ -147,7 +177,7 @@ void AVLTree::deleteValue(int val)
 
     root->height = getHeight(root);
     root->balanceFactor = getBalanceFactor(root);
-    //root = rebalance(root);
+    root = rebalance(root);
 }
 
 AVLNode* AVLTree::deleteValue(AVLNode* n, int val)
@@ -156,9 +186,23 @@ AVLNode* AVLTree::deleteValue(AVLNode* n, int val)
     {
         if (val < n->value) n->left = deleteValue(n->left, val);
         else if (val > n->value) n->right = deleteValue(n->right, val);
-        else if (n->right==nullptr && n->left==nullptr) n = nullptr;
-        else if (n->left==nullptr) n = n->right;
-        else if (n->right==nullptr) n = n->left;
+
+        else if (n->right==nullptr && n->left==nullptr) 
+        {
+            n = nullptr;
+            size--;
+        }
+        else if (n->left==nullptr) 
+        {
+            n = n->right;
+            size--;
+        }
+        else if (n->right==nullptr) 
+        {
+            n = n->left;
+            size--;
+        }
+
         else 
         {
             AVLNode* replacement = minimum(n->right);					
@@ -170,51 +214,51 @@ AVLNode* AVLTree::deleteValue(AVLNode* n, int val)
 
     n->height = getHeight(n);
     n->balanceFactor = getBalanceFactor(n);
-    //n = rebalance(n);
+    n = rebalance(n);
     return n;
 }
 
 AVLNode* AVLTree::rebalance(AVLNode* n)
 {
-    if(n->balanceFactor == -2)
-    {
-        if (n->left->balanceFactor < 0) return rotateRight(n);
-        else if (n->left->balanceFactor > 0) return rotateLeftRight(n);
-    }
-    else if (n->balanceFactor == 2)
+    if (n->balanceFactor == 2)
     {
         if (n->right->balanceFactor > 0) return rotateLeft(n);
         else if (n->right->balanceFactor < 0) return rotateRightLeft(n);
+    }
+    else if(n->balanceFactor == -2)
+    {
+        if (n->left->balanceFactor < 0) return rotateRight(n);
+        else if (n->left->balanceFactor > 0) return rotateLeftRight(n);
     }
 
     return n;
 }
 
-AVLNode* AVLTree::rotateLeft(AVLNode* n)
+AVLNode* AVLTree::rotateLeft(AVLNode* y)
 {
-    AVLNode* temp = n->right;
-    n->right = temp->left;
-    n->height = getHeight(n);
-    temp->left = n;
-    temp->height = getHeight(temp); 
-    return temp;
+    AVLNode* x = y->right;
+    y->right = x->left;
+    y->height = getHeight(y);
+    x->left = y;
+    x->height = getHeight(x); 
+    return x;
 }
 
-AVLNode* AVLTree::rotateRight(AVLNode* n)
+AVLNode* AVLTree::rotateRight(AVLNode* y)
 {
-    AVLNode* temp = n->left;
-    n->left = temp->right;
-    n->height = getHeight(n);
-    temp->right = n;
-    temp->height = getHeight(temp); 
-    return temp;
+    AVLNode* x = y->left;
+    y->left = x->right;
+    y->height = getHeight(y);
+    x->right = y;
+    x->height = getHeight(x); 
+    return x;
 }
 
 AVLNode* AVLTree::rotateLeftRight(AVLNode* y)
 {
     //rotate left
     AVLNode* x = y->left;
-    AVLNode* z = x->left;
+    AVLNode* z = x->right;
     x->right = z->left;
     x->height = getHeight(x);
     z->left = x;
