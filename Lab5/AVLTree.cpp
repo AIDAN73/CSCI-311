@@ -251,8 +251,10 @@ AVLNode* AVLTree::rotateLeft(AVLNode* y)
     AVLNode* x = y->right;
     y->right = x->left;
     y->height = getHeight(y);
+    y->balanceFactor = getBalanceFactor(y);
     x->left = y;
-    x->height = getHeight(x); 
+    x->height = getHeight(x);                               //you have to update the heights and balance factors as you rotate
+    x->balanceFactor = getBalanceFactor(x);
     return x;
 }
 
@@ -261,8 +263,10 @@ AVLNode* AVLTree::rotateRight(AVLNode* y)
     AVLNode* x = y->left;
     y->left = x->right;
     y->height = getHeight(y);
+    y->balanceFactor = getBalanceFactor(y);
     x->right = y;
-    x->height = getHeight(x); 
+    x->height = getHeight(x);
+    x->balanceFactor = getBalanceFactor(x); 
     return x;
 }
 
@@ -273,13 +277,16 @@ AVLNode* AVLTree::rotateLeftRight(AVLNode* y)
     AVLNode* z = x->right;
     x->right = z->left;
     x->height = getHeight(x);
+    x->balanceFactor = getBalanceFactor(x);
     z->left = x;
     y->left = z;
     //rotate right
     y->left = z->right;
     y->height = getHeight(y);
+    y->balanceFactor = getBalanceFactor(y);
     z->right = y;
     z->height = getHeight(z);
+    z->balanceFactor = getBalanceFactor(z);
     return z;
 }
 
@@ -290,13 +297,16 @@ AVLNode* AVLTree::rotateRightLeft(AVLNode* y)
     AVLNode* z = x->left;
     x->left = z->right;
     x->height = getHeight(x);
+    x->balanceFactor = getBalanceFactor(x);
     z->right = x;
     y->right = z;
     //rotate left
     y->right = z->left;
     y->height = getHeight(y);
+    y->balanceFactor = getBalanceFactor(y);
     z->left = y;
     z->height = getHeight(z);
+    z->balanceFactor = getBalanceFactor(z);
     return z;
 }
 
