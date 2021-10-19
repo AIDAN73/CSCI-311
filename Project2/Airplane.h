@@ -3,14 +3,17 @@
 // Author: Aidan Murphree
 
 #include <string>
-using std::string;
+#include <iostream>
+#include <iomanip>
+using namespace std;
 
 
 #ifndef AIRPLANE_H
 #define AIRPLANE_H
 
-class Airplane{
-  public:
+class Airplane
+{
+    public:
     int entranceTime;
     int ID;
     string intent;
@@ -19,7 +22,10 @@ class Airplane{
     
     
     Airplane();
-    Airplane(int t, int id, string i, bool em, int f);
+    Airplane(int Time, int id, string Intent, bool Emergency, int Fuel);
+
+    void displayPlane();
+    
 };
 
 #endif

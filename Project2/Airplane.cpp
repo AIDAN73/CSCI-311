@@ -13,11 +13,17 @@ Airplane::Airplane()
     fuel = 0;
 }
 
-Airplane::Airplane(int t, int id, string i, bool em, int f)
+Airplane::Airplane(int Time, int id, string Intent, bool Emergency, int Fuel)
 {
-    entranceTime = t;
+    entranceTime = Time;
     ID = id;
-    intent = i;
-    emergency = em;
-    fuel = f;
+    intent = Intent;
+    emergency = Emergency;
+    fuel = Fuel;
+}
+
+void Airplane::displayPlane()
+{
+    
+    cout<<left<<boolalpha<<"ID: "<<setw(5)<<ID<<"Entrance Time: "<<setw(4)<<entranceTime<<"Intent: "<<setw(12)<<intent<<"Emergency: "<<setw(7)<<emergency<<"Fuel: "<<fuel<<endl;
 }
