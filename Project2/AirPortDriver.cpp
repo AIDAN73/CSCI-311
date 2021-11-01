@@ -84,9 +84,9 @@ void addPlanes(int timestep)
 //decreases the fuel of every plane in a FIFO queue. If the plane is in the normal arriving queue and hits 20 fuel, it is deleted from the normal queue and sent to the low fuel heap
 deque<Airplane*> updateFuelQueue(deque<Airplane*> workingQueue, string queueType)
 {
-	for (int i; i=workingQueue.size(); i++)
+	for (int i=0; i<workingQueue.size(); i++)
 	{
-		workingQueue[i]->fuel = workingQueue[i]->fuel - 1;
+		workingQueue[i]->fuel = (workingQueue[i]->fuel - 1);
 		if(workingQueue[i]->fuel <= 20 && queueType == "arrivingQueue")						//send to emergency if they're arriving
 		{
 			lowFuelArrivingQueue.push_back(workingQueue[i]);				//add to back of low fuel queue
@@ -103,35 +103,85 @@ void updateFuelPriorityQueue()
 }
 */
 
-void updateFuelall()
+void updateFuelAll()
 {
 	departingQueue = updateFuelQueue(departingQueue, "departingQueue");
 	emergencyDepartingQueue = updateFuelQueue(emergencyDepartingQueue, "emergencyDepartingQueue");
 	arrivingQueue = updateFuelQueue(arrivingQueue, "arrivingQueue");
-    //lowFuelArrivingQueue = updateFuelPriorityQueue(lowFuelArrivingQueue, "lowFuelArrivingQueue");
+    lowFuelArrivingQueue = updateFuelQueue(lowFuelArrivingQueue, "lowFuelArrivingQueue");
 	emergencyArrivingQueue = updateFuelQueue(emergencyArrivingQueue, "emergencyArrivingQueue");
 	
 }
 
+//used by the runway functions to process a plane from a given queue
+deque<Airplane*> process(deque<Airplane*> workingQueue)
+{
+	cout<<"/t";
+	workingQueue[0]->displayPlane();
+	workingQueue.pop_front();
+    return workingQueue;
+}
 
-/*
 void runwayA()
 {
-	if ((departingQueue !=0) && (emergencyDepartingQueue.size==0) && (emergencyArrivingQueue.size==0))		//people to takeoff, no emergencies 
-		takeoff(departingQueue.pop);
-
-	else if (emergencyDepartingQueue.size!=0)		//departing emergencies first
-		takeoff(emergencyDepartingQueue.pop);
-
-	else if (emergencyArrivingQueue.size!=0)		//arriving emergencies after
-		land(emergencyArrivingQueue.pop);
-
-	else land(arrivingQueue)
-
-
-
+	cout<<"Runway A"<<endl;
+	if (emergencyArrivingQueue.size()!=0)			//arriving emergencies first
+	{
+		emergencyArrivingQueue = process(emergencyArrivingQueue);	
+		return;
+	}
+	else if (emergencyDepartingQueue.size()!=0)		//departing emergencies after
+	{
+		emergencyDepartingQueue = process(emergencyDepartingQueue);
+		return;
+	}
+	else if (lowFuelArrivingQueue.size()!=0)		//low fuel planes next
+	{
+		lowFuelArrivingQueue = process(lowFuelArrivingQueue);
+		return;
+	}
+	else if (departingQueue.size() !=0)				//no emergencies, prioritize takeoffs
+	{
+		departingQueue = process(departingQueue);
+		return;
+	}
+	else if (arrivingQueue.size()!=0) 
+		arrivingQueue = process(arrivingQueue);		//if nothing else, land planes
 }
-*/
+
+
+void runwayB()
+{
+	cout<<"Runway B"<<endl;
+	if (emergencyArrivingQueue.size()!=0)			//arriving emergencies first
+	{
+		emergencyArrivingQueue = process(emergencyArrivingQueue);	
+		return;
+	}
+	else if (emergencyDepartingQueue.size()!=0)		//departing emergencies after
+	{
+		emergencyDepartingQueue = process(emergencyDepartingQueue);
+		return;
+	}
+	else if (lowFuelArrivingQueue.size()!=0)		//low fuel planes next
+	{
+		lowFuelArrivingQueue = process(lowFuelArrivingQueue);
+		return;
+	}
+	else if (arrivingQueue.size() !=0)				//no emergencies, prioritize landings
+	{
+		arrivingQueue = process(arrivingQueue);
+		return;
+	}
+	else if (departingQueue.size()!=0) 
+		departingQueue = process(departingQueue);		//if nothing else, takeoff planes
+}
+
+
+
+
+
+
 
 int main()
 {
@@ -143,7 +193,7 @@ int main()
     Airplane plane5 (7,5,"arriving",false,30);
     Airplane plane6 (7,6,"departing",false,50);
     
-
+	
     Airplane* plane = &plane0;
     simulationPlanes.push_back(plane);
     plane = &plane1;
@@ -158,11 +208,15 @@ int main()
     simulationPlanes.push_back(plane);
 
 
-    for (int i=0; i<8; i++)
+    for (int i=0; i<15; i++)
     {
         cout<<endl<<"TIME: "<<i<<endl;
         addPlanes(i);
         displayAllQueues();
+		runwayA();
+		runwayB();
+		updateFuelAll();
+
     }
     
 
