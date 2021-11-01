@@ -49,7 +49,11 @@ void sortPlane(Airplane* plane)
 {
 	if (plane->intent == "arriving")
 	{
-		if (plane->emergency == true || plane->fuel <= 2) emergencyArrivingQueue.push_back(plane);
+		if (plane->emergency == true || plane->fuel <= 2) 
+		{
+			plane->emergency = true;							//set planes with low fuel to emergency
+			emergencyArrivingQueue.push_back(plane);
+		}
 		else if (plane->fuel <= 20) lowFuelArrivingQueue.push_back(plane);
 		else arrivingQueue.push_back(plane);
 	}
@@ -65,7 +69,7 @@ void sortPlane(Airplane* plane)
 //them from simulationPlanes and puts them into the sort function to sort them into the appropriate queue
 void addPlanes(int timestep)
 {
-    
+    if (simulationPlanes.size() == 0) return;
 
 	bool planeAdded = true;
 	while(planeAdded)
@@ -116,7 +120,7 @@ void updateFuelAll()
 //used by the runway functions to process a plane from a given queue
 deque<Airplane*> process(deque<Airplane*> workingQueue)
 {
-	cout<<"/t";
+	cout<<"\t";
 	workingQueue[0]->displayPlane();
 	workingQueue.pop_front();
     return workingQueue;
@@ -178,21 +182,36 @@ void runwayB()
 }
 
 
-
+bool planesLeft()
+{
+	if (simulationPlanes.size()!=0 || emergencyArrivingQueue.size()!=0 || emergencyDepartingQueue.size()!=0 || lowFuelArrivingQueue.size()!=0 || arrivingQueue.size() !=0 || (departingQueue.size()!=0))
+	{
+		return true;
+	}
+	return false;
+}
 
 
 
 
 int main()
 {
+	/*
     Airplane plane0 (1,0,"arriving",false,30);
     Airplane plane1 (3,1,"departing",false,50);
     Airplane plane2 (3,2,"arriving",false,1);
     Airplane plane3 (5,3,"arriving",false,15);
     Airplane plane4 (6,4,"departing",true,50);
     Airplane plane5 (7,5,"arriving",false,30);
-    Airplane plane6 (7,6,"departing",false,50);
+    Airplane plane6 (7,6,"departing",false,50);*/
     
+    Airplane plane0 (1,0,"arriving",false,30);
+    Airplane plane1 (1,1,"departing",false,50);
+    Airplane plane2 (1,2,"arriving",false,1);
+    Airplane plane3 (1,3,"arriving",false,15);
+    Airplane plane4 (1,4,"departing",true,50);
+    Airplane plane5 (1,5,"arriving",false,30);
+    Airplane plane6 (1,6,"departing",false,50);	
 	
     Airplane* plane = &plane0;
     simulationPlanes.push_back(plane);
@@ -207,15 +226,19 @@ int main()
     plane = &plane5;
     simulationPlanes.push_back(plane);
 
-
-    for (int i=0; i<15; i++)
+	int time=0;
+    while(planesLeft())
     {
-        cout<<endl<<"TIME: "<<i<<endl;
-        addPlanes(i);
+        cout<<endl<<"TIME: "<<time<<endl;
+		//cout<<"Adding planes:"<<endl;
+        addPlanes(time);
         displayAllQueues();
+		//cout<<"Servicing planes:"<<endl;
 		runwayA();
 		runwayB();
+		//cout<<"Updating fuel:"<<endl; 
 		updateFuelAll();
+		time++;
 
     }
     

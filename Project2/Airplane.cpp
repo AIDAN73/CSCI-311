@@ -1,8 +1,9 @@
 // CSCI 311 - Fall 2021
 // Airplane class
-// Author: Carter Tillquist
+// Author: Aidan Murphree
 
 #include "Airplane.h"
+using namespace std;
 
 Airplane::Airplane()
 {

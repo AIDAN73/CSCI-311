@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
-using namespace std;
+
 
 
 #ifndef AIRPLANE_H
@@ -14,6 +14,7 @@ using namespace std;
 class Airplane
 {
     public:
+
     int entranceTime;
     int ID;
     string intent;
@@ -21,10 +22,11 @@ class Airplane
     int fuel;
     
     
+    
     Airplane();
     Airplane(int Time, int id, string Intent, bool Emergency, int Fuel);
 
-    void displayPlane();
+    void displayPlane(); 
     
 };
 
