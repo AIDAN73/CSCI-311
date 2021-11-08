@@ -19,6 +19,7 @@ Node *swapChildren(Node *v)
 	Node* temp = v->left;
 	v->left = v->right;
 	v->right = temp;
+    return v;
 }
 
 Node *invertBST(Node *v)
@@ -28,7 +29,7 @@ Node *invertBST(Node *v)
 	if (v->left != nullptr) v->left = invertBST(v->left);
 	if (v->right != nullptr) v->right = invertBST(v->right);
 
-	swapChildren(v);
+	v = swapChildren(v);
 
 	return v;
 }
@@ -40,18 +41,18 @@ Node *invertBST(Node *v)
 
 bool isMinHeapRecursive( const vector<int> &v, int position)
 {
-	int lastPosition = v.size()-1;
+	int lastIndex = v.size()-1;
 	int leftChild = 2*position+1;
 	int rightChild = 2*position+2;
 
-	if (position > lastPosition) return true;	
+	if (position > lastIndex) return true;	
 
-	if (leftChild <= lastPosition)				//if the left child exists, check if the parent is larger than it
+	if (leftChild <= lastIndex)				//if the left child exists, check if the parent is larger than it
 	{
 		if (v[position] > v[leftChild]) return false;
 	}
 
-	if ((rightChild) <= lastPosition)				//if the right child exists, check if the parent is larger than it
+	if ((rightChild) <= lastIndex)				//if the right child exists, check if the parent is larger than it
 	{
 		if (v[position] > v[rightChild]) return false;
 	}
@@ -115,8 +116,25 @@ int pop(vector<int> &v, int heapSize)
 	return max;
 }
 
+void constructMaxHeap(vector<int> &v, int heapSize)
+{
+    for (int i = (heapSize-2)/2; i>=0; i--)
+    {
+        maxHeapify(v, i, heapSize);
+    }
+}
+
 void heapsort(vector<int> &v)
 {
+    int heapSize = v.size();
+    constructMaxHeap(v, heapSize);
+
+    int temp;
+    for (int i=(v.size()-1); i>0; i--)
+    {
+        v[i] = pop(v, heapSize);
+        heapSize = heapSize - 1;
+    }
 }
 
 /***********************************************************************************
@@ -127,7 +145,19 @@ void heapsort(vector<int> &v)
  * *********************************************************************************/
 bool isSubset(const vector<string> &A, const vector<string> &B)
 {
-	return false;
+    HashTable* table = new HashTable();
+
+    for (int i=0; i<B.size(); i++)
+    {
+        table->insert(B[i]);
+    }
+
+    for (int i=0; i < A.size(); i++)
+    {
+        if (table->search(A[i]) == -1) return false;
+    }
+
+	return true;
 }
 
 /********************************************************************************************************
