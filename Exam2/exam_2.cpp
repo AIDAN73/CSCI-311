@@ -14,6 +14,8 @@ using namespace std;
  * Write a function that, given a node of a BST, inverts its subtree. *
  * This function should return the root of the new substree           *
  * ********************************************************************/
+
+//helper function for inverting a BST. Takes a node and swaps the sides of its children
 Node *swapChildren(Node *v)
 {
 	Node* temp = v->left;
@@ -22,11 +24,12 @@ Node *swapChildren(Node *v)
     return v;
 }
 
+//inverts a binary search tree recursively
 Node *invertBST(Node *v)
 {
-	if (v->left == nullptr && v->right == nullptr) return v;
+	if (v->left == nullptr && v->right == nullptr) return v;            //base case, this node is a leaf. no children to swap
 
-	if (v->left != nullptr) v->left = invertBST(v->left);
+	if (v->left != nullptr) v->left = invertBST(v->left);               //if children, swap the sides of the children first
 	if (v->right != nullptr) v->right = invertBST(v->right);
 
 	v = swapChildren(v);
@@ -39,13 +42,15 @@ Node *invertBST(Node *v)
  * Write a function that returns true if the given vector is a min-heap and false otherwise *
  * ******************************************************************************************/
 
+//recursive function to return if a section in a vector after a given index is a minheap. This could be done much easier iteratively 
+//since the minheap is implemented as a vector, but I was used to thinking recursively and forgot I could just loop over the array backwards.
 bool isMinHeapRecursive( const vector<int> &v, int position)
 {
-	int lastIndex = v.size()-1;
+	int lastIndex = v.size()-1;             //handy values to keep track of the last used index and the children of the current index
 	int leftChild = 2*position+1;
 	int rightChild = 2*position+2;
 
-	if (position > lastIndex) return true;	
+	if (position > lastIndex) return true;		//base case: if we've tried to access a child that doesn't exist, everything so far has been a minheap
 
 	if (leftChild <= lastIndex)				//if the left child exists, check if the parent is larger than it
 	{
@@ -57,10 +62,10 @@ bool isMinHeapRecursive( const vector<int> &v, int position)
 		if (v[position] > v[rightChild]) return false;
 	}
 
-	return isMinHeapRecursive(v, leftChild) && isMinHeapRecursive(v, rightChild);
+	return isMinHeapRecursive(v, leftChild) && isMinHeapRecursive(v, rightChild);		//check that the subtrees of both children are minheaps. 
 }
 
-
+//returns true if the given vector is a Min Heap. Simply checks that the vector isn't empty and calls the recursive function 
 bool isMinHeap(const vector<int> &v)
 {
 	if (v.size() == 0) return true;
