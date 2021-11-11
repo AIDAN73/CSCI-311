@@ -2,6 +2,7 @@
 #include <deque>
 #include <iostream>
 #include "Airplane.h"
+#include "priorityQueue.h"
 using namespace std;
 
 deque<Airplane*> simulationPlanes;						//list of airplane pointers to feed into program
@@ -9,7 +10,7 @@ deque<Airplane*> simulationPlanes;						//list of airplane pointers to feed into
 deque<Airplane*> departingQueue;						//normal and emergency planes are FIFO, low fuel are sorted by minimum fuel
 deque<Airplane*> emergencyDepartingQueue;				
 deque<Airplane*> arrivingQueue;							
-deque<Airplane*> lowFuelArrivingQueue;					
+priorityQueue lowFuelArrivingQueue;					
 deque<Airplane*> emergencyArrivingQueue;				
 
 void displayQueue(deque<Airplane*> workingQueue)
@@ -19,6 +20,8 @@ void displayQueue(deque<Airplane*> workingQueue)
         workingQueue[i]->displayPlane();
     }
 }
+
+
 
 void displayAllQueues()
 {
@@ -36,7 +39,7 @@ void displayAllQueues()
     displayQueue(arrivingQueue);
 
     cout<<endl<<"Low Fuel Arriving Queue: "<<endl;
-    displayQueue(lowFuelArrivingQueue);
+    lowFuelArrivingQueue.displayPriorityQueue();
 
     cout<<endl<<"Emergency Arriving Queue: "<<endl;
     displayQueue(emergencyArrivingQueue);
@@ -54,7 +57,7 @@ void sortPlane(Airplane* plane)
 			plane->emergency = true;							//set planes with low fuel to emergency
 			emergencyArrivingQueue.push_back(plane);
 		}
-		else if (plane->fuel <= 20) lowFuelArrivingQueue.push_back(plane);
+		else if (plane->fuel <= 20) lowFuelArrivingQueue.push(plane);
 		else arrivingQueue.push_back(plane);
 	}
 	else if (plane->intent == "departing") 
@@ -93,26 +96,34 @@ deque<Airplane*> updateFuelQueue(deque<Airplane*> workingQueue, string queueType
 		workingQueue[i]->fuel = (workingQueue[i]->fuel - 1);
 		if(workingQueue[i]->fuel <= 20 && queueType == "arrivingQueue")						//send to emergency if they're arriving
 		{
-			lowFuelArrivingQueue.push_back(workingQueue[i]);				//add to back of low fuel queue
+			lowFuelArrivingQueue.push(workingQueue[i]);				//add to back of low fuel queue
 			workingQueue.erase(workingQueue.begin() + i);										//delete 
 		}
 	}
     return workingQueue;
 }
 
-/*
+
 void updateFuelPriorityQueue()
 {
+	for (int i=0; i < lowFuelArrivingQueue.pQueue.size(); i++)
+	{
+		lowFuelArrivingQueue.pQueue[i]->fuel = lowFuelArrivingQueue.pQueue[i]->fuel-1;			//reduce fuel
 
+		if(lowFuelArrivingQueue.pQueue[i]->fuel <= 2)
+		{
+			emergencyArrivingQueue.push_back(lowFuelArrivingQueue.deletePlane(i));
+		}
+	}
 }
-*/
+
 
 void updateFuelAll()
 {
 	departingQueue = updateFuelQueue(departingQueue, "departingQueue");
 	emergencyDepartingQueue = updateFuelQueue(emergencyDepartingQueue, "emergencyDepartingQueue");
 	arrivingQueue = updateFuelQueue(arrivingQueue, "arrivingQueue");
-    lowFuelArrivingQueue = updateFuelQueue(lowFuelArrivingQueue, "lowFuelArrivingQueue");
+    updateFuelPriorityQueue();
 	emergencyArrivingQueue = updateFuelQueue(emergencyArrivingQueue, "emergencyArrivingQueue");
 	
 }
@@ -139,9 +150,10 @@ void runwayA()
 		emergencyDepartingQueue = process(emergencyDepartingQueue);
 		return;
 	}
-	else if (lowFuelArrivingQueue.size()!=0)		//low fuel planes next
+	else if (lowFuelArrivingQueue.pQueue.size()!=0)		//low fuel planes next
 	{
-		lowFuelArrivingQueue = process(lowFuelArrivingQueue);
+		cout<<"\t";
+		lowFuelArrivingQueue.pop()->displayPlane();
 		return;
 	}
 	else if (departingQueue.size() !=0)				//no emergencies, prioritize takeoffs
@@ -167,9 +179,10 @@ void runwayB()
 		emergencyDepartingQueue = process(emergencyDepartingQueue);
 		return;
 	}
-	else if (lowFuelArrivingQueue.size()!=0)		//low fuel planes next
+	else if (lowFuelArrivingQueue.pQueue.size()!=0)		//low fuel planes next
 	{
-		lowFuelArrivingQueue = process(lowFuelArrivingQueue);
+		cout<<"\t";
+		lowFuelArrivingQueue.pop()->displayPlane();
 		return;
 	}
 	else if (arrivingQueue.size() !=0)				//no emergencies, prioritize landings
@@ -184,7 +197,7 @@ void runwayB()
 
 bool planesLeft()
 {
-	if (simulationPlanes.size()!=0 || emergencyArrivingQueue.size()!=0 || emergencyDepartingQueue.size()!=0 || lowFuelArrivingQueue.size()!=0 || arrivingQueue.size() !=0 || (departingQueue.size()!=0))
+	if (simulationPlanes.size()!=0 || emergencyArrivingQueue.size()!=0 || emergencyDepartingQueue.size()!=0 || lowFuelArrivingQueue.pQueue.size()!=0 || arrivingQueue.size() !=0 || (departingQueue.size()!=0))
 	{
 		return true;
 	}
@@ -205,14 +218,55 @@ int main()
     Airplane plane5 (7,5,"arriving",false,30);
     Airplane plane6 (7,6,"departing",false,50);*/
     
-    Airplane plane0 (1,0,"arriving",false,30);
-    Airplane plane1 (1,1,"departing",false,50);
-    Airplane plane2 (1,2,"arriving",false,1);
-    Airplane plane3 (1,3,"arriving",false,15);
-    Airplane plane4 (1,4,"departing",true,50);
-    Airplane plane5 (1,5,"arriving",false,30);
-    Airplane plane6 (1,6,"departing",false,50);	
+    Airplane plane0 (1,0,"arriving",false,13);
+    Airplane plane1 (1,1,"arriving",false,5);
+    Airplane plane2 (1,2,"arriving",false,3);
+    Airplane plane3 (1,3,"arriving",false,19);
+    Airplane plane4 (1,4,"arriving",false,20);
+    Airplane plane5 (1,5,"arriving",false,9);
+    Airplane plane6 (1,6,"arriving",false,11);	
 	
+	Airplane* plane = &plane0;
+    lowFuelArrivingQueue.push(plane);
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+    plane = &plane1;
+    lowFuelArrivingQueue.push(plane);
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+    plane = &plane2;
+    lowFuelArrivingQueue.push(plane);
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+    plane = &plane3;
+    lowFuelArrivingQueue.push(plane);
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+    plane = &plane4;
+    lowFuelArrivingQueue.push(plane);
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+    plane = &plane5;
+    lowFuelArrivingQueue.push(plane);
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+	lowFuelArrivingQueue.pop();
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+	lowFuelArrivingQueue.pop();
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+	lowFuelArrivingQueue.pop();
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+	lowFuelArrivingQueue.pop();
+	lowFuelArrivingQueue.displayPriorityQueue();
+	cout<<endl;
+	lowFuelArrivingQueue.pop();
+	lowFuelArrivingQueue.displayPriorityQueue();
+
+
+/*
     Airplane* plane = &plane0;
     simulationPlanes.push_back(plane);
     plane = &plane1;
@@ -241,21 +295,5 @@ int main()
 		time++;
 
     }
-    
-
-
-
-	/*
-	while (there's planes that haven't entered or haven't been serviced)
-	{
-		addPlanes(timestep)   //adds all the inputted planes that are on that timestep to the holding pattern
-
-		runwayA()				//select a plane to use runway A, prioritizing departures
-		runwayB()				//select a plane for runway B, prioritizing arrivals
-
-		updateFuel() 			//suck 1 fuel out of everyone's tanks
-
-		timestep++
-	}
-	*/
+    */
 }

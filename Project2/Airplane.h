@@ -17,14 +17,14 @@ class Airplane
 
     int entranceTime;
     int ID;
-    string intent;
+    std::string intent;
     bool emergency;
     int fuel;
     
     
     
     Airplane();
-    Airplane(int Time, int id, string Intent, bool Emergency, int Fuel);
+    Airplane(int Time, int id, std::string Intent, bool Emergency, int Fuel);
 
     void displayPlane(); 
     

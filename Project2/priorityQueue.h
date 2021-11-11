@@ -10,14 +10,17 @@ class priorityQueue
 {
     private:
     int queueSize;
-    std::vector<Airplane*> pQueue;
+    void minHeapify(int i);
 
     public:
 
     priorityQueue();
     bool empty(); 
     int size();
+    std::vector<Airplane*> pQueue;
+    void displayPriorityQueue();
     void push(Airplane*);
+    Airplane* deletePlane(int i);
     Airplane* pop();
     Airplane* peek(); 
 };
