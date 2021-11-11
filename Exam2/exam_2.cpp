@@ -27,6 +27,7 @@ Node *swapChildren(Node *v)
 //inverts a binary search tree recursively
 Node *invertBST(Node *v)
 {
+	if (v == nullptr) return v;
 	if (v->left == nullptr && v->right == nullptr) return v;            //base case, this node is a leaf. no children to swap
 
 	if (v->left != nullptr) v->left = invertBST(v->left);               //if children, swap the sides of the children first
