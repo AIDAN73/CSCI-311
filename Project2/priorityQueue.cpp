@@ -35,11 +35,11 @@ void priorityQueue::minHeapify(int i)
 	int minI = i;
 	int heapSize = pQueue.size()-1;
 
-	if (left < heapSize && pQueue[left]->fuel < pQueue[i]->fuel)
+	if (left <= heapSize && pQueue[left]->fuel < pQueue[i]->fuel)
 	{
 		minI = left;
 	}
-	if (right < heapSize && pQueue[right]->fuel < pQueue[minI]->fuel)
+	if (right <= heapSize && pQueue[right]->fuel < pQueue[minI]->fuel)
 	{
 		minI = right;
 	}
@@ -58,7 +58,7 @@ void priorityQueue::push(Airplane* newPlane)
     int i = pQueue.size()-1;
 	int parent = (i-1)/2;
 
-    while(i>0 && pQueue[parent] > pQueue[i])
+    while(i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)
 	{
 		Airplane* temp = pQueue[i];
 		pQueue[i] = pQueue[parent];
@@ -86,7 +86,7 @@ Airplane* priorityQueue::deletePlane(int i)
     pQueue.pop_back();							//get rid of last value
 	int parent = (i-1)/2;
 
-	while (i>0 && pQueue[parent] > pQueue[i])		//sends value up until it belongs
+	while (i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)		//sends value up until it belongs
 	{
 		Airplane* temp = pQueue[i];
 		pQueue[i] = pQueue[parent];

@@ -197,7 +197,7 @@ void runwayB()
 
 bool planesLeft()
 {
-	if (simulationPlanes.size()!=0 || emergencyArrivingQueue.size()!=0 || emergencyDepartingQueue.size()!=0 || lowFuelArrivingQueue.pQueue.size()!=0 || arrivingQueue.size() !=0 || (departingQueue.size()!=0))
+	if (simulationPlanes.size()!=0 || emergencyArrivingQueue.size()!=0 || emergencyDepartingQueue.size()!=0 || !lowFuelArrivingQueue.empty() || arrivingQueue.size() !=0 || (departingQueue.size()!=0))
 	{
 		return true;
 	}
