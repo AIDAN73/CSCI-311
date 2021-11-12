@@ -6,19 +6,13 @@
 using namespace std;
 
 
+//default constructor
 priorityQueue::priorityQueue()
-{
-    queueSize = 0;
-    if (pQueue.size()==0); 
-}
+{}
 
-bool priorityQueue::empty()
-{
-    if (pQueue.size() == 0) return true;
-    return false;
-}
+bool priorityQueue::empty() { return (pQueue.size() == 0); }
 
-int priorityQueue::size()   { return queueSize; }
+int priorityQueue::size()   { return pQueue.size()-1; }
 
 void priorityQueue::displayPriorityQueue()
 {
@@ -28,37 +22,39 @@ void priorityQueue::displayPriorityQueue()
 	}
 }
 
+//updates the subheap of the priority queue starting at index i, so that it is a minheap
 void priorityQueue::minHeapify(int i)
 {
-	int left = 2 * i + 1;
+	int left = 2 * i + 1;				//set up handy variables
 	int right = 2 * i + 2;
 	int minI = i;
-	int heapSize = pQueue.size()-1;
+	int heapSize = pQueue.size()-1;		//tracks the last filled index
 
-	if (left <= heapSize && pQueue[left]->fuel < pQueue[i]->fuel)
+	if (left <= heapSize && pQueue[left]->fuel < pQueue[i]->fuel)		//if the left child is smaller, set the min to the left child
 	{
 		minI = left;
 	}
-	if (right <= heapSize && pQueue[right]->fuel < pQueue[minI]->fuel)
+	if (right <= heapSize && pQueue[right]->fuel < pQueue[minI]->fuel)		//if the right child is the smallest, set the min to the right child
 	{
 		minI = right;
 	}
 	if (minI != i)
 	{
-		Airplane* temp = pQueue[i];
+		Airplane* temp = pQueue[i];				//swap the min with the current index, then check the swapped subheap
 		pQueue[i] = pQueue[minI];
 		pQueue[minI] = temp;
 		minHeapify(minI);
 	}
 }
 
+//pushes a plane into the minheap and sorts it into the correct position based on its fuel
 void priorityQueue::push(Airplane* newPlane)
 {
-    pQueue.push_back(newPlane);
+    pQueue.push_back(newPlane);					//put it in the last position
     int i = pQueue.size()-1;
 	int parent = (i-1)/2;
 
-    while(i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)
+    while(i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)				//check it against its parents, move it up if it's has less fuel
 	{
 		Airplane* temp = pQueue[i];
 		pQueue[i] = pQueue[parent];
@@ -98,6 +94,7 @@ Airplane* priorityQueue::deletePlane(int i)
 	return plane;
 }
 
+//returns but does not delete the first plane in the minheap
 Airplane* priorityQueue::peek()
 {
     return pQueue[0];

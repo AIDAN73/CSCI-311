@@ -1,9 +1,174 @@
+
+#include <string>
+#include <vector>
 #include <queue>
 #include <deque>
 #include <iostream>
-#include "Airplane.h"
-#include "priorityQueue.h"
 using namespace std;
+
+
+/********************************************************************************************
+* Airplane Class                                                                            * 
+*********************************************************************************************/
+#ifndef AIRPLANE_H
+#define AIRPLANE_H
+
+class Airplane
+{
+    public:
+    	int entranceTime;
+    	int ID;
+    	std::string intent;
+    	bool emergency;
+    	int fuel;
+
+		//default constructor
+    	Airplane()
+		{
+    		entranceTime = 0;
+    		ID = 0;
+    		intent = "departing";
+    		emergency = false;
+    		fuel = 0;
+		}
+
+    	//parameterized constructor
+		Airplane(int Time, int id, std::string Intent, bool Emergency, int Fuel)
+		{
+			entranceTime = Time;
+    		ID = id;
+    		intent = Intent;
+    		emergency = Emergency;
+    		fuel = Fuel;
+		}
+
+		//outputs the info for a plane according to the requirements
+    	void displayPlane()
+		{
+			cout<<boolalpha << entranceTime << " " << ID << " " << intent << " " << emergency << " " << fuel << endl;
+		}
+};
+#endif
+
+
+/********************************************************************************************
+* priorityQueue class                                                                       * 
+*********************************************************************************************/
+#ifndef PRIORITY_QUEUE
+#define PRIORITY_QUEUE
+
+class priorityQueue
+{
+    private:
+
+		//updates the subheap of the priority queue starting at index i, so that it is a minheap
+    	void minHeapify(int i)
+		{
+			int left = 2 * i + 1;			//set up handy variables
+			int right = 2 * i + 2;
+			int minI = i;
+			int heapSize = pQueue.size()-1;		//tracks the last filled index
+
+			if (left <= heapSize && pQueue[left]->fuel < pQueue[i]->fuel)		//if the left child is smaller, set the min to the left child
+			{
+					minI = left;
+			}
+			if (right <= heapSize && pQueue[right]->fuel < pQueue[minI]->fuel)	//if the right child is the smallest, set the min to the right child
+			{
+				minI = right;
+			}
+			if (minI != i)
+			{
+				Airplane* temp = pQueue[i];				//swap the min with the current index, then check the swapped subheap
+				pQueue[i] = pQueue[minI];
+				pQueue[minI] = temp;
+				minHeapify(minI);
+			}
+		}
+
+    public:
+
+		vector<Airplane*> pQueue;
+
+		//default constructor
+    	priorityQueue()
+		{
+		}
+
+    	bool empty() { return (pQueue.size() == 0); }
+
+    	int size() { return pQueue.size()-1; }
+
+    	void displayPriorityQueue()
+		{
+    		for (int i=0; i<pQueue.size(); i++)
+			{
+				pQueue[i]->displayPlane();
+			}
+		}
+
+		//pushes a plane into the minheap and sorts it into the correct position based on its fuel
+    	void push(Airplane* newPlane)
+		{
+    		pQueue.push_back(newPlane);				//put it in the last position
+    		int i = pQueue.size()-1;
+			int parent = (i-1)/2;
+
+    		while(i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)		//check it against its parents, move it up if it's has less fuel
+			{
+				Airplane* temp = pQueue[i];
+				pQueue[i] = pQueue[parent];
+				pQueue[parent] = temp;
+
+				i = parent;
+			}
+		}
+
+
+		//deletes a plane from the priority queue based on its index. Used to move critically low fuel planes from the middle of the priority queue to the emergency arrivals
+    	Airplane* deletePlane(int i)
+		{
+			Airplane* plane = pQueue[i];
+    		pQueue[i] = pQueue[pQueue.size()-1];		//replace index with last value
+    		pQueue.pop_back();							//get rid of last value
+			int parent = (i-1)/2;
+
+			while (i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)		//sends value up until it belongs
+			{
+				Airplane* temp = pQueue[i];
+				pQueue[i] = pQueue[parent];
+				pQueue[parent] = temp;
+				i = parent;
+			}
+
+    		minHeapify(i);				//re minheapify after all the shuffling
+			return plane;
+		}
+
+		//deletes and returns the plane with the lowest fuel, while maintaining the minheap
+    	Airplane* pop()
+		{
+    		Airplane* plane = pQueue[0];
+    		pQueue[0] = pQueue[pQueue.size()-1];
+    		pQueue.pop_back();
+    		minHeapify(0);
+    		return plane;
+		}
+
+		//returns but does not delete the first plane in the minheap
+    	Airplane* peek()
+		{
+    		return pQueue[0];
+		}
+};
+
+#endif
+
+
+/********************************************************************************************
+* AirportDriver code                                                                        * 
+*********************************************************************************************/
+
 
 deque<Airplane*> simulationPlanes;						//list of airplane pointers to feed into program
 
@@ -256,5 +421,4 @@ int main()
 		}
 		time++;
     }
-    
 }

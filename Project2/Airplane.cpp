@@ -5,6 +5,7 @@
 #include "Airplane.h"
 using namespace std;
 
+//default constructor
 Airplane::Airplane()
 {
     entranceTime = 0;
@@ -14,6 +15,7 @@ Airplane::Airplane()
     fuel = 0;
 }
 
+//parameterized constructor
 Airplane::Airplane(int Time, int id, string Intent, bool Emergency, int Fuel)
 {
     entranceTime = Time;
@@ -23,8 +25,8 @@ Airplane::Airplane(int Time, int id, string Intent, bool Emergency, int Fuel)
     fuel = Fuel;
 }
 
+//outputs the info for a plane according to the requirements
 void Airplane::displayPlane()
 {
-    
-    cout<<left<<boolalpha<<"ID: "<<setw(5)<<ID<<"Entrance Time: "<<setw(4)<<entranceTime<<"Intent: "<<setw(12)<<intent<<"Emergency: "<<setw(7)<<emergency<<"Fuel: "<<fuel<<endl;
+    cout<<boolalpha << entranceTime << " " << ID << " " << intent << " " << emergency << " " << fuel << endl;
 }

@@ -4,8 +4,6 @@
 
 #include <string>
 #include <iostream>
-#include <iomanip>
-
 
 
 #ifndef AIRPLANE_H
