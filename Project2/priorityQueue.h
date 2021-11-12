@@ -9,7 +9,6 @@
 class priorityQueue
 {
     private:
-    int queueSize;
     void minHeapify(int i);
 
     public:
