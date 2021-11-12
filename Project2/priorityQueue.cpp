@@ -8,7 +8,9 @@ using namespace std;
 
 //default constructor
 priorityQueue::priorityQueue()
-{}
+{
+
+}
 
 bool priorityQueue::empty() { return (pQueue.size() == 0); }
 
@@ -94,7 +96,7 @@ Airplane* priorityQueue::deletePlane(int i)
 	return plane;
 }
 
-//returns but does not delete the first plane in the minheap
+//returns but does not delete top of minheap
 Airplane* priorityQueue::peek()
 {
     return pQueue[0];

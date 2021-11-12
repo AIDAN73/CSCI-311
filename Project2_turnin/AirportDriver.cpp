@@ -92,8 +92,7 @@ class priorityQueue
 
 		//default constructor
     	priorityQueue()
-		{
-		}
+		{}
 
     	bool empty() { return (pQueue.size() == 0); }
 
