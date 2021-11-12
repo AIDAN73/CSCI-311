@@ -111,15 +111,14 @@ class priorityQueue
 		{
     		pQueue.push_back(newPlane);				//put it in the last position
     		int i = pQueue.size()-1;
-			int parent = (i-1)/2;
 
-    		while(i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)		//check it against its parents, move it up if it's has less fuel
+    		while(i>0 && pQueue[(i-1)/2]->fuel > pQueue[i]->fuel)		//check it against its parents, move it up if it's has less fuel
 			{
 				Airplane* temp = pQueue[i];
-				pQueue[i] = pQueue[parent];
-				pQueue[parent] = temp;
+				pQueue[i] = pQueue[(i-1)/2];
+				pQueue[(i-1)/2] = temp;
 
-				i = parent;
+				i = (i-1)/2;
 			}
 		}
 
@@ -130,14 +129,13 @@ class priorityQueue
 			Airplane* plane = pQueue[i];
     		pQueue[i] = pQueue[pQueue.size()-1];		//replace index with last value
     		pQueue.pop_back();							//get rid of last value
-			int parent = (i-1)/2;
 
-			while (i>0 && pQueue[parent]->fuel > pQueue[i]->fuel)		//sends value up until it belongs
+			while (i>0 && pQueue[(i-1)/2]->fuel > pQueue[i]->fuel)		//sends value up until it belongs
 			{
 				Airplane* temp = pQueue[i];
-				pQueue[i] = pQueue[parent];
-				pQueue[parent] = temp;
-				i = parent;
+				pQueue[i] = pQueue[(i-1)/2];
+				pQueue[(i-1)/2] = temp;
+				i = (i-1)/2;
 			}
 
     		minHeapify(i);				//re minheapify after all the shuffling
@@ -221,7 +219,7 @@ void sortPlane(Airplane* plane)
 	{
 		if (plane->emergency == true || plane->fuel <= 2) 		
 		{
-			plane->emergency = true;							//set planes with very low fuel to emergency
+			//plane->emergency = true;							//set planes with very low fuel to emergency
 			emergencyArrivingQueue.push_back(plane);
 		}
 		else if (plane->fuel <= 20) lowFuelArrivingQueue.push(plane);
@@ -292,9 +290,9 @@ void updateFuelPriorityQueue()
 //calls the update fuel functions on all the arriving queues
 void updateFuelAll()
 {
-	arrivingQueue = updateFuelQueue(arrivingQueue, "arrivingQueue");
 	emergencyArrivingQueue = updateFuelQueue(emergencyArrivingQueue, "emergencyArrivingQueue");
     updateFuelPriorityQueue();
+	arrivingQueue = updateFuelQueue(arrivingQueue, "arrivingQueue");
 }
 
 //used by the runway functions to process a plane from a given normal queue
@@ -321,15 +319,15 @@ void runwayA()
 		emergencyDepartingQueue = process(emergencyDepartingQueue);
 		return;
 	}
+	else if (departingQueue.size() !=0)				//no emergencies, prioritize takeoffs
+	{
+		departingQueue = process(departingQueue);
+		return;
+	}
 	else if (lowFuelArrivingQueue.pQueue.size()!=0)		//low fuel planes next
 	{
 		cout<<"\t\t";
 		lowFuelArrivingQueue.pop()->displayPlane();
-		return;
-	}
-	else if (departingQueue.size() !=0)				//no emergencies, prioritize takeoffs
-	{
-		departingQueue = process(departingQueue);
 		return;
 	}
 	else if (arrivingQueue.size()!=0) 
@@ -337,20 +335,21 @@ void runwayA()
 }
 
 
-//considers the active queues of planes and picks a plane to land, prioritizing takeoffs
+//considers the active queues of planes and picks a plane to land, prioritizing landings
 void runwayB()
 {
 	cout<<"\tRunway B"<<endl;
-	if (emergencyArrivingQueue.size()!=0)			//arriving emergencies first
-	{
-		emergencyArrivingQueue = process(emergencyArrivingQueue);	
-		return;
-	}
-	else if (emergencyDepartingQueue.size()!=0)		//departing emergencies after
+	if (emergencyDepartingQueue.size()!=0)		//departing emergencies first
 	{
 		emergencyDepartingQueue = process(emergencyDepartingQueue);
 		return;
 	}
+	else if (emergencyArrivingQueue.size()!=0)			//arriving emergencies after
+	{
+		emergencyArrivingQueue = process(emergencyArrivingQueue);	
+		return;
+	}
+	
 	else if (lowFuelArrivingQueue.pQueue.size()!=0)		//low fuel planes next
 	{
 		cout<<"\t\t";
@@ -381,7 +380,12 @@ bool planesLeft()
 //checks if any of the active queues planes in them, or if a plane is about to be added at the given time. Used to check if the program should output anything for the given timestep
 bool somethingsGonnaHappen(int t)
 {
-	return ((simulationPlanes[0]->entranceTime == t) || planesInSimulation());
+	if (planesInSimulation()) return true;
+	if (simulationPlanes.size()!=0)
+	{
+		return (simulationPlanes[0]->entranceTime == t);
+	}
+	return false;
 }
 
 //used to convert a string cin input into the expected boolean for the airplane constructor
@@ -414,10 +418,16 @@ int main()
 		{
 			cout<<"Time step "<<time<<endl;
         	addPlanes(time);
+			//cout<<"Runway A"<<endl;
+			//displayAllQueues();
 			runwayA();
+			//cout<<"Runway B"<<endl;
 			runwayB(); 
+			//cout<<"Updating fuel"<<endl;
 			updateFuelAll();
+			//cout<<"Finished timestep"<<endl;
 		}
 		time++;
     }
+    
 }

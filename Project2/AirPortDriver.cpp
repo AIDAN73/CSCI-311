@@ -217,7 +217,12 @@ bool planesLeft()
 //checks if any of the active queues planes in them, or if a plane is about to be added at the given time. Used to check if the program should output anything for the given timestep
 bool somethingsGonnaHappen(int t)
 {
-	return ((simulationPlanes[0]->entranceTime == t) || planesInSimulation());
+	if (planesInSimulation()) return true;
+	if (simulationPlanes.size()!=0)
+	{
+		return (simulationPlanes[0]->entranceTime == t);
+	}
+	return false;
 }
 
 //used to convert a string cin input into the expected boolean for the airplane constructor
@@ -250,9 +255,13 @@ int main()
 		{
 			cout<<"Time step "<<time<<endl;
         	addPlanes(time);
+			//cout<<"Runway A"<<endl;
 			runwayA();
+			//cout<<"Runway B"<<endl;
 			runwayB(); 
+			//cout<<"Updating fuel"<<endl;
 			updateFuelAll();
+			//cout<<"Finished timestep"<<endl;
 		}
 		time++;
     }
