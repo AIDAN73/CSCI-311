@@ -9,25 +9,32 @@
 #include <limits.h>
 using namespace std;
 
-Graph::Graph(){
+Graph::Graph()
+{
 }
 
-void Graph::printAdjList(){
+void Graph::printAdjList()
+{
 }
 
-bool Graph::isNeighbor(int u, int v){
+bool Graph::isNeighbor(int u, int v)
+{
   return false;
 }
 
-void Graph::DFS(){
+void Graph::DFS()
+{
 }
 
-int Graph::DFSVisit(int s, int time){
+int Graph::DFSVisit(int s, int time)
+{
   return time;
 }
 
-void Graph::BFS(int s){
+void Graph::BFS(int s)
+{
 }
 
-vector<int> Graph::distancesFrom(int s){
+vector<int> Graph::distancesFrom(int s)
+{
 }
