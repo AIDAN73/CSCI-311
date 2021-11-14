@@ -1,5 +1,12 @@
-4
-0 1 departing false 100
-0 2 departing false 100
-0 3 departing false 100
-0 4 arriving false 50
+10
+1 0 departing true 50
+1 0 departing true 50
+1 0 departing true 50
+1 0 departing true 50
+1 0 departing true 50
+1 0 departing true 50
+1 1 arriving false 4
+1 2 arriving false 5
+1 3 arriving false 6
+1 4 arriving false 7
+

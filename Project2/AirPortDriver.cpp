@@ -57,7 +57,7 @@ void sortPlane(Airplane* plane)
 	{
 		if (plane->emergency == true || plane->fuel <= 2) 		
 		{
-			plane->emergency = true;							//set planes with very low fuel to emergency
+			//plane->emergency = true;							//set planes with very low fuel to emergency
 			emergencyArrivingQueue.push_back(plane);
 		}
 		else if (plane->fuel <= 20) lowFuelArrivingQueue.push(plane);
@@ -105,6 +105,7 @@ deque<Airplane*> updateFuelQueue(deque<Airplane*> workingQueue, string queueType
 		{
 			lowFuelArrivingQueue.push(workingQueue[i]);										//add to back of low fuel queue
 			workingQueue.erase(workingQueue.begin() + i);									//delete 
+			i--;
 		}
 	}
     return workingQueue;
@@ -128,9 +129,9 @@ void updateFuelPriorityQueue()
 //calls the update fuel functions on all the arriving queues
 void updateFuelAll()
 {
-	arrivingQueue = updateFuelQueue(arrivingQueue, "arrivingQueue");
 	emergencyArrivingQueue = updateFuelQueue(emergencyArrivingQueue, "emergencyArrivingQueue");
     updateFuelPriorityQueue();
+	arrivingQueue = updateFuelQueue(arrivingQueue, "arrivingQueue");
 }
 
 //used by the runway functions to process a plane from a given normal queue
@@ -147,14 +148,20 @@ deque<Airplane*> process(deque<Airplane*> workingQueue)
 void runwayA()
 {
 	cout<<"\tRunway A"<<endl;
-	if (emergencyArrivingQueue.size()!=0)			//arriving emergencies first
+
+	if (emergencyDepartingQueue.size()!=0)		//departing emergencies first
+	{
+		emergencyDepartingQueue = process(emergencyDepartingQueue);
+		return;
+	}
+	else if (emergencyArrivingQueue.size()!=0)			//arriving emergencies after
 	{
 		emergencyArrivingQueue = process(emergencyArrivingQueue);	
 		return;
 	}
-	else if (emergencyDepartingQueue.size()!=0)		//departing emergencies after
+	else if (departingQueue.size() !=0)				//no emergencies, prioritize takeoffs
 	{
-		emergencyDepartingQueue = process(emergencyDepartingQueue);
+		departingQueue = process(departingQueue);
 		return;
 	}
 	else if (lowFuelArrivingQueue.pQueue.size()!=0)		//low fuel planes next
@@ -163,17 +170,12 @@ void runwayA()
 		lowFuelArrivingQueue.pop()->displayPlane();
 		return;
 	}
-	else if (departingQueue.size() !=0)				//no emergencies, prioritize takeoffs
-	{
-		departingQueue = process(departingQueue);
-		return;
-	}
 	else if (arrivingQueue.size()!=0) 
 		arrivingQueue = process(arrivingQueue);		//if nothing else, land planes
 }
 
 
-//considers the active queues of planes and picks a plane to land, prioritizing takeoffs
+//considers the active queues of planes and picks a plane to land, prioritizing landings
 void runwayB()
 {
 	cout<<"\tRunway B"<<endl;
@@ -187,6 +189,7 @@ void runwayB()
 		emergencyDepartingQueue = process(emergencyDepartingQueue);
 		return;
 	}
+	
 	else if (lowFuelArrivingQueue.pQueue.size()!=0)		//low fuel planes next
 	{
 		cout<<"\t\t";
@@ -256,6 +259,7 @@ int main()
 			cout<<"Time step "<<time<<endl;
         	addPlanes(time);
 			//cout<<"Runway A"<<endl;
+			//displayAllQueues();
 			runwayA();
 			//cout<<"Runway B"<<endl;
 			runwayB(); 

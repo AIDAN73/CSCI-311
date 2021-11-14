@@ -267,6 +267,7 @@ deque<Airplane*> updateFuelQueue(deque<Airplane*> workingQueue, string queueType
 		{
 			lowFuelArrivingQueue.push(workingQueue[i]);										//add to back of low fuel queue
 			workingQueue.erase(workingQueue.begin() + i);									//delete 
+			i--;
 		}
 	}
     return workingQueue;
@@ -309,14 +310,15 @@ deque<Airplane*> process(deque<Airplane*> workingQueue)
 void runwayA()
 {
 	cout<<"\tRunway A"<<endl;
-	if (emergencyArrivingQueue.size()!=0)			//arriving emergencies first
-	{
-		emergencyArrivingQueue = process(emergencyArrivingQueue);	
-		return;
-	}
-	else if (emergencyDepartingQueue.size()!=0)		//departing emergencies after
+
+	if (emergencyDepartingQueue.size()!=0)		//departing emergencies first
 	{
 		emergencyDepartingQueue = process(emergencyDepartingQueue);
+		return;
+	}
+	else if (emergencyArrivingQueue.size()!=0)			//arriving emergencies after
+	{
+		emergencyArrivingQueue = process(emergencyArrivingQueue);	
 		return;
 	}
 	else if (departingQueue.size() !=0)				//no emergencies, prioritize takeoffs
@@ -339,14 +341,14 @@ void runwayA()
 void runwayB()
 {
 	cout<<"\tRunway B"<<endl;
-	if (emergencyDepartingQueue.size()!=0)		//departing emergencies first
-	{
-		emergencyDepartingQueue = process(emergencyDepartingQueue);
-		return;
-	}
-	else if (emergencyArrivingQueue.size()!=0)			//arriving emergencies after
+	if (emergencyArrivingQueue.size()!=0)			//arriving emergencies first
 	{
 		emergencyArrivingQueue = process(emergencyArrivingQueue);	
+		return;
+	}
+	else if (emergencyDepartingQueue.size()!=0)		//departing emergencies after
+	{
+		emergencyDepartingQueue = process(emergencyDepartingQueue);
 		return;
 	}
 	
