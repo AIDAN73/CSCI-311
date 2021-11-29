@@ -98,7 +98,7 @@ void Graph::BFS(int s)
 	nodes[s].visited = true;
 
 	vector<Node*> queue = {};
-	queue.push_back(&nodes[s]);				//queue holds the list of nodes whose neighbors need to be explore 
+	queue.push_back(&nodes[s]);				//queue holds the list of nodes whose neighbors need to be explored 
 
 	while (queue.size() > 0)				//visit all nodes
 	{
