@@ -14,15 +14,14 @@ class Node
 public:
 	int id;
 	int dist;
-	int discovered;
-	int finished;
-	bool visited;
+	bool isCharger;
+
+	bool visited; 
 	Node *predecessor;
 	vector<Node *> neighbors;
-	vector<int> distances;
 
 	Node();
-	Node(int);
+	Node(int i, bool c);
 
 	void displayNode();
 };

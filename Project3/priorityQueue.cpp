@@ -25,13 +25,22 @@ void priorityQueue::displayPriorityQueue()
 	}
 }
 
-//updates the subheap of the priority queue starting at index i, so that it is a minheap
+//updates the subheap of the priority queue starting at index i, so that it is a minheap. Allows the root of the subheap to move up the rest of the tree
 void priorityQueue::minHeapify(int i)
 {
 	int left = 2 * i + 1;				//set up handy variables
 	int right = 2 * i + 2;
+	int parent = (i-1)/2;
 	int minI = i;
 	int heapSize = pQueue.size()-1;		//tracks the last filled index
+
+	if (pQueue[parent]->dist < pQueue[i]->dist)
+	{
+		Node* temp = pQueue[i];				//swap the min with the current index, then check the swapped subheap
+		pQueue[i] = pQueue[parent];
+		pQueue[parent] = temp;
+		minHeapify(parent);
+	}
 
 	if (left <= heapSize && pQueue[left]->dist < pQueue[i]->dist)		//if the left child is smaller, set the min to the left child
 	{

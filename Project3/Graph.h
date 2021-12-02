@@ -13,7 +13,10 @@ class Graph
 public:
 	vector<Node> nodes;
 
+	vector<vector<int>> adjMatrix;
+
 	Graph();
+	Graph(int i);
 
 	void printAdjList();
 	bool isNeighbor(int, int);

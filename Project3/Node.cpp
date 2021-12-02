@@ -11,19 +11,23 @@
 Node::Node()
 {
 	id = 0;
+	isCharger = false;
+
+	bool visited = false;
 	dist = INT_MAX;
 	predecessor = nullptr;
 	neighbors = {};
-	distances = {};
 }
 
-Node::Node(int i)
+Node::Node(int i, bool c)
 {
 	id = i;
+	isCharger = c;
+
+	bool visited = false;
 	dist = INT_MAX;
 	predecessor = nullptr;
 	neighbors = {};
-	distances = {};
 }
 
 void Node::displayNode()

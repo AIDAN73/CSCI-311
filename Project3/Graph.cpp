@@ -15,6 +15,15 @@ Graph::Graph()
 	nodes = {};
 }
 
+Graph::Graph(int i)
+{
+	nodes = {};
+
+	vector<int> vect (i, -1);
+	vector<vector<int>> twoDVect (i, vect);
+	adjMatrix = twoDVect;
+}
+
 // prints all the neighbors of all the nodes in a tree. Simply iterates through all the nodes and prints their neighbors
 void Graph::printAdjList()
 {
@@ -22,9 +31,9 @@ void Graph::printAdjList()
 	{
 		Node currentNode = nodes[i];
 		cout << currentNode.id << ": ";
-		for (int j = 0; j < currentNode.neighbors.size(); j++)
+		for (int j = 0; j < adjMatrix[currentNode.id].size(); j++)
 		{
-			cout << "(" << currentNode.neighbors[j]->id << ", " << currentNode.distances[j] << ") ";
+			cout << "(" << j << ", " << adjMatrix[currentNode.id][j] << ") ";
 		}
 		cout << endl;
 	}
@@ -82,6 +91,7 @@ struct CompareDistance
 	}
 };
 
+//dijkstra's algorithm implemented with a minHeap. Finds the minimum distances to each node from a given starting node s
 void Graph::dijkstra(int s)
 {
 	for (int i = 0; i < nodes.size(); i++) // set all nodes to a baseline
@@ -100,21 +110,18 @@ void Graph::dijkstra(int s)
 
 	while (!minQueue.empty())
 	{
-		Node* currentNode = minQueue.peek();
+		Node* currentNode = minQueue.pop();
 
 		for (int k=0; k < currentNode->neighbors.size(); k++)
 		{
 			Node* currentNeighbor = currentNode->neighbors[k]; 
 
-			if (currentNeighbor->dist > (currentNode->dist + currentNode->distances[currentNeighbor->id]))
+			if (currentNeighbor->dist > (currentNode->dist + adjMatrix[currentNode->id][currentNeighbor->id]))
 			{
-				currentNeighbor->dist = (currentNode->dist + currentNode->distances[currentNeighbor->id]);
+				currentNeighbor->dist = (currentNode->dist + adjMatrix[currentNode->id][currentNeighbor->id]);
+				minQueue.minHeapify(currentNeighbor->id);
 			}
 		}
-
-		minQueue.minHeapify(0);				//revalidate the heap after messing with the distances
-		minQueue.pop();
-
 	}
 
 }
