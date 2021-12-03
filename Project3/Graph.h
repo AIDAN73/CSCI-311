@@ -17,8 +17,11 @@ public:
 
 	Graph();
 	Graph(int i);
+	void initializeMatrix(int i);
 
 	void printAdjList();
+	void printAdjMatrix();
+	void printDistances();
 	bool isNeighbor(int, int);
 
 	bool isReachable(int, int);

@@ -30,6 +30,17 @@ Node::Node(int i, bool c)
 	neighbors = {};
 }
 
+Node::Node(int i, bool c, int d)
+{
+	id = i;
+	isCharger = c;
+
+	bool visited = false;
+	dist = d;
+	predecessor = nullptr;
+	neighbors = {};
+}
+
 void Node::displayNode()
 {
 	cout<<"ID: "<<id<<"\tDist: "<<dist;

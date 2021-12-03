@@ -22,6 +22,7 @@ public:
 
 	Node();
 	Node(int i, bool c);
+	Node(int i, bool c, int d);
 
 	void displayNode();
 };

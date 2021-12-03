@@ -22,7 +22,9 @@ void priorityQueue::displayPriorityQueue()
     for (int i=0; i<pQueue.size(); i++)
 	{
 		pQueue[i]->displayNode();
+		cout<<endl;
 	}
+	cout<<endl;
 }
 
 //updates the subheap of the priority queue starting at index i, so that it is a minheap. Allows the root of the subheap to move up the rest of the tree
@@ -34,27 +36,34 @@ void priorityQueue::minHeapify(int i)
 	int minI = i;
 	int heapSize = pQueue.size()-1;		//tracks the last filled index
 
-	if (pQueue[parent]->dist < pQueue[i]->dist)
+	if (pQueue[parent] != pQueue[i] && pQueue[parent]->dist > pQueue[i]->dist)
 	{
+		//cout<<"Called on parent"<<endl;
 		Node* temp = pQueue[i];				//swap the min with the current index, then check the swapped subheap
 		pQueue[i] = pQueue[parent];
 		pQueue[parent] = temp;
 		minHeapify(parent);
 	}
+	//cout<<"First if passed"<<endl;
 
 	if (left <= heapSize && pQueue[left]->dist < pQueue[i]->dist)		//if the left child is smaller, set the min to the left child
 	{
 		minI = left;
 	}
+	//cout<<"Second if passed"<<endl;
+
 	if (right <= heapSize && pQueue[right]->dist < pQueue[minI]->dist)		//if the right child is the smallest, set the min to the right child
 	{
 		minI = right;
 	}
+	//cout<<"Third if passed"<<endl;
+
 	if (minI != i)
 	{
 		Node* temp = pQueue[i];				//swap the min with the current index, then check the swapped subheap
 		pQueue[i] = pQueue[minI];
 		pQueue[minI] = temp;
+		//cout<<"Gonna get called"<<endl;
 		minHeapify(minI);
 	}
 }
@@ -110,4 +119,13 @@ Node* priorityQueue::deleteNode(int i)
 Node* priorityQueue::peek()
 {
     return pQueue[0];
+}
+
+int priorityQueue::search(Node* n)
+{
+	for (int i=0; i<pQueue.size(); i++)
+	{
+		if (pQueue[i] == n) return i;
+	}
+	return -1;
 }

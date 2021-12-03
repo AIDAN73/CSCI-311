@@ -22,6 +22,7 @@ class priorityQueue
     Node* deleteNode(int i);
     Node* pop();
     Node* peek(); 
+	int search(Node* n);
 };
 
 #endif
