@@ -43,38 +43,61 @@ Graph simplifyGraph (Graph* G, int start, int end, int maxCharge, int charge)
 	G->printDistances();
 	Graph simpG;
 
+	//add all the important nodes to the simplified graph. No edges currently
 	for (int i=0; i<G->nodes.size(); i++)
 	{
 		if(G->nodes[i].isCharger  ||  G->nodes[i].id == start  ||  G->nodes[i].id == end)
 		{
-			if(G->nodes[i].dist <= maxCharge)
-				simpG.nodes.push_back(G->nodes[i]);
+			simpG.nodes.push_back(G->nodes[i]);
+			cout<<"Added Node "<<G->nodes[i].id<<endl;
 		}
 	}
-	cout<<"Added "<<simpG.nodes.size()+1<<" Nodes"<<endl;;
-	simpG.initializeMatrix(simpG.nodes.size());
+	cout<<"Added "<<simpG.nodes.size()<<" Nodes"<<endl;;
+	simpG.initializeMatrix(simpG.nodes.size());					//resize the simplified graph's adjacency matrix
 
-	
 
 	for (int i=0; i<simpG.nodes.size(); i++)
 	{
 		Node* currentImportantNode = &simpG.nodes[i];
 
-		cout<<endl<<"Doing neighbors of "<<currentImportantNode->id<<endl;
+		cout<<endl<<"Connecting node "<<currentImportantNode->id<<endl;
 
 		G->dijkstra(currentImportantNode->id);				//get the distance of all nodes from this important node
 		G->printDistances();
 
-		for (int j=0; j<currentImportantNode->neighbors.size(); j++)
+		for (int j=0; simpG.nodes.size(); j++)
 		{
+			Node* currentImportantNeighbor = &simpG.nodes[i];
+
+			if(currentImportantNode->id == start)
+			{
+				if (currentImportantNeighbor->dist < charge)
+				{
+					simpG.nodes[i].neighbors.push_back(&simpG.nodes[j]);
+					simpG.adjMatrix[i][j] = currentImportantNeighbor->dist;
+				}
+			}
+
+			else
+			{
+				if (currentImportantNeighbor->dist < maxCharge)
+				{
+					simpG.nodes[i].neighbors.push_back(&simpG.nodes[j]);
+					simpG.adjMatrix[i][j] = currentImportantNeighbor->dist;
+				}
+			}
 			
+
+
+			/*
 			Node* currentImportantNeighbor = currentImportantNode->neighbors[j];
 
 			simpG.adjMatrix[currentImportantNode->id][currentImportantNeighbor->id] = currentImportantNeighbor->dist;
 			cout<<"Updating the distance of ("<<currentImportantNode->id<<", "<<currentImportantNeighbor->id<<")"<<endl;
 
-			//simpG.adjMatrix[currentImportantNeighbor->id][currentImportantNode->id] = currentImportantNeighbor->dist;
+			simpG.adjMatrix[currentImportantNeighbor->id][currentImportantNode->id] = currentImportantNeighbor->dist;
 			cout<<"Updating the distance of ("<<currentImportantNeighbor->id<<", "<<currentImportantNode->id<<")"<<endl;
+			*/
 		}
 
 		for(int i=0; i<simpG.nodes.size(); i++)
