@@ -32,19 +32,30 @@ void Graph::initializeMatrix(int i)
 	adjMatrix = twoDVect;
 }
 
+int Graph::findIndex(int target)
+{
+	for (int i=0; i<nodes.size(); i++)
+	{
+		if (nodes[i]->id == target)		return i;
+	}
+	return -1;
+}
+
 // prints all the neighbors of all the nodes in a tree. Simply iterates through all the nodes and prints their neighbors
 void Graph::printAdjList()
 {
 	cout<<"Adjacency List: "<<endl;
 	for (int i = 0; i < nodes.size(); i++)
 	{
-		//cout<<"Printing line "<<i<<" of "<< nodes.size()<<endl;
+		//cout<<"i = "<<i<<" ";
+		//cout<<"Printing line "<<i<<" of "<< nodes.size()-1<<endl;
 		Node* currentNode = nodes[i];
 		cout << currentNode->id << ": ";
 		for (int j = 0; j < currentNode->neighbors.size(); j++)
 		{
+			//cout<<"j="<<j;
 			Node* currentNeighbor = currentNode->neighbors[j];
-			cout << "(" << currentNeighbor->id << ", " << adjMatrix[currentNode->id][currentNeighbor->id] << ") ";
+			cout << "(" << currentNeighbor->id << ", " << adjMatrix[i][findIndex(currentNeighbor->id)] << ") ";
 		}
 		cout << endl;
 	}
@@ -55,14 +66,14 @@ void Graph::printAdjMatrix()
 	cout<<"Adjacency Matrix: "<<endl;
 	for (int i=0; i<adjMatrix.size(); i++)
 	{
-		cout<<"\t"<<i;
+		cout<<"\t"<<nodes[i]->id;
 	}
 
 	cout<<endl;
 
 	for (int i=0; i<adjMatrix.size(); i++)
 	{
-		cout<<i;
+		cout<<nodes[i]->id;
 		for (int j=0; j<adjMatrix[i].size(); j++)
 		{
 			cout<<"\t";
@@ -77,7 +88,7 @@ void Graph::printDistances()
 {
 	for (int i=0; i<nodes.size(); i++)
 	{
-		cout<<i<<": "<<nodes[i]->dist<<endl;
+		cout<<nodes[i]->id<<": "<<nodes[i]->dist<<endl;
 	}
 	cout<<endl;
 }
@@ -137,7 +148,7 @@ struct CompareDistance
 //dijkstra's algorithm implemented with a minHeap. Finds the minimum distances to each node from a given starting node s
 void Graph::dijkstra(int s)
 {
-	cout<<"Dijkstra's from "<<s<<endl;
+	//cout<<"Dijkstra's from "<<nodes[s]->id<<endl;
 	for (int i = 0; i < nodes.size(); i++) // set all nodes to a baseline
 	{
 		nodes[i]->dist = INT_MAX;
@@ -155,30 +166,41 @@ void Graph::dijkstra(int s)
 	for (int j = 0; j < nodes.size(); j++) 
 	{
 		minQueue.push(nodes[j]);
+		//minQueue.displayPriorityQueue();
 	}
-	//minQueue.displayPriorityQueue();
+	
 
 	while (!minQueue.empty())	
 	{
 		//cout<<"Here"<<endl;
 		Node* currentNode = minQueue.pop();
-		cout<<"Current Node: "<<currentNode->id<<endl;
+		//cout<<"Current Node: "<<currentNode->id<<endl;
+/*
+		cout<<"Neighbors list of node "<<currentNode->id<<": ";
+		for(int z=0; z<currentNode->neighbors.size(); z++)
+		{
+			cout<<currentNode->neighbors[z]->id<<", ";
+		}
+		cout<<endl;
+*/
 		for (int k=0; k < currentNode->neighbors.size(); k++)				//for each of the curent node's neighbors
 		{
 			//cout<<"\tLoop "<<k<<endl;
 			Node* currentNeighbor = currentNode->neighbors[k]; 				//holds a pointer to the current neighbor
-			cout<<"\tCurrent Neighbor: "<<currentNeighbor->id<<endl;
+			//cout<<"\tCurrent Neighbor: "<<currentNeighbor->id<<endl;
 
-			if (currentNeighbor->dist > (currentNode->dist + adjMatrix[currentNode->id][currentNeighbor->id]))		//if the neighbor's current distance is larger than the other path
+			if (currentNeighbor->dist > (currentNode->dist + adjMatrix[findIndex(currentNode->id)][findIndex(currentNeighbor->id)]))		//if the neighbor's current distance is larger than the other path
 			{
-				currentNeighbor->dist = (currentNode->dist + adjMatrix[currentNode->id][currentNeighbor->id]);		//set it to the new path's distance
+				currentNeighbor->dist = (currentNode->dist + adjMatrix[findIndex(currentNode->id)][findIndex(currentNeighbor->id)]);		//set it to the new path's distance
 				currentNeighbor->predecessor = currentNode;
-				cout<<"\tDistance from "<<currentNode->id<<" to "<<currentNeighbor->id<< "is " <<currentNeighbor->dist<<endl;
+				//cout<<"\tDistance from "<<nodes[s]->id<<" to "<<currentNeighbor->id<< " is " <<currentNeighbor->dist<<endl;
+				//minQueue.displayPriorityQueue();
 				minQueue.minHeapify(minQueue.search(currentNeighbor));
-				cout<<"\tminheapified"<<endl;
+				//cout<<"\tminheapified"<<endl;
+				//minQueue.displayPriorityQueue();
 			}
 		}
-		minQueue.displayPriorityQueue();
+		//minQueue.displayPriorityQueue();
 		
 	}
 	//printDistances();

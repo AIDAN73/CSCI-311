@@ -6,6 +6,7 @@
 #include "Graph.h"
 #include "priorityQueue.h"
 #include <iostream>
+#include <limits.h>
 
 
 
@@ -38,8 +39,7 @@ bool verifyPath (Graph G, vector<int> path, int i, int c)
 Graph simplifyGraph (Graph* G, int start, int end, int maxCharge, int charge)
 {
 	cout<<"Start: "<<start<<" End: "<<end<<" Max Charge: "<<maxCharge<<" Charge: "<<charge<<endl;
-	G->dijkstra(start);
-	G->printDistances();
+
 	Graph simpG;
 
 	//add all the important nodes to the simplified graph. No edges currently
@@ -47,7 +47,8 @@ Graph simplifyGraph (Graph* G, int start, int end, int maxCharge, int charge)
 	{
 		if(G->nodes[i]->isCharger  ||  G->nodes[i]->id == start  ||  G->nodes[i]->id == end)
 		{
-			simpG.nodes.push_back(G->nodes[i]);
+			Node* v = new Node(G->nodes[i]->id, G->nodes[i]->isCharger);
+			simpG.nodes.push_back(v);
 			cout<<"Added Node "<<G->nodes[i]->id<<endl;
 		}
 	}
@@ -67,56 +68,86 @@ Graph simplifyGraph (Graph* G, int start, int end, int maxCharge, int charge)
 		for (int j=0; j<simpG.nodes.size(); j++)
 		{
 			Node* currentImportantNeighbor = simpG.nodes[j];
-			cout<<"Considering neighbor "<<currentImportantNeighbor->id<<endl;
-		
+			currentImportantNeighbor->dist = G->nodes[currentImportantNeighbor->id]->dist;
+			//cout<<"Considering neighbor "<<currentImportantNeighbor->id<<endl;
+
 			if(currentImportantNode->id == start)
 			{
 				
-				if (currentImportantNeighbor->dist <= charge)
+				if (currentImportantNeighbor->dist <= charge  &&  currentImportantNeighbor!=currentImportantNode)
 				{
 					simpG.nodes[i]->neighbors.push_back(simpG.nodes[j]);
 					simpG.adjMatrix[i][j] = currentImportantNeighbor->dist;
+					simpG.adjMatrix[j][i] = currentImportantNeighbor->dist;
 					cout<<"Distance from start node "<<simpG.nodes[i]->id<<" to "<<simpG.nodes[j]->id<<" is "<<currentImportantNeighbor->dist<<endl;
 				}
+				else cout<<"Edge from start node "<<simpG.nodes[i]->id<<" to "<<simpG.nodes[j]->id<<" not included"<<endl;
 			}
 
 			else
 			{
-				if (currentImportantNeighbor->dist <= maxCharge)
+				if (currentImportantNeighbor->dist <= maxCharge   &&  currentImportantNeighbor!=currentImportantNode)
 				{
 					simpG.nodes[i]->neighbors.push_back(simpG.nodes[j]);
 					simpG.adjMatrix[i][j] = currentImportantNeighbor->dist;
+					simpG.adjMatrix[j][i] = currentImportantNeighbor->dist;
 					cout<<"Distance from "<<simpG.nodes[i]->id<<" to "<<simpG.nodes[j]->id<<" is "<<currentImportantNeighbor->dist<<endl;
 				}
+				else cout<<"Edge from "<<simpG.nodes[i]->id<<" to "<<simpG.nodes[j]->id<<" not included"<<endl;
+				
 			}
-			
-
-
-			/*
-			Node* currentImportantNeighbor = currentImportantNode->neighbors[j];
-
-			simpG.adjMatrix[currentImportantNode->id][currentImportantNeighbor->id] = currentImportantNeighbor->dist;
-			cout<<"Updating the distance of ("<<currentImportantNode->id<<", "<<currentImportantNeighbor->id<<")"<<endl;
-
-			simpG.adjMatrix[currentImportantNeighbor->id][currentImportantNode->id] = currentImportantNeighbor->dist;
-			cout<<"Updating the distance of ("<<currentImportantNeighbor->id<<", "<<currentImportantNode->id<<")"<<endl;
-			*/
 		}
-
-		for(int i=0; i<simpG.nodes.size(); i++)
+		/*
+		cout<<endl<<"Neighbors of "<<simpG.nodes[i]->id<<": ";
+		for(int k=0; k<simpG.nodes[i]->neighbors.size(); k++)
 		{
-			simpG.nodes[i]->displayNode();
-			cout<<endl;
+			cout<<simpG.nodes[i]->neighbors[k]->id<<", ";
 		}
-		
-		//simpG.printAdjMatrix();
-		//simpG.printAdjList();
+		cout<<endl;
+		*/
 	}
 
 	return simpG;
 }
 
+vector<int> simplifiedPath(Graph* G, int start, int end)
+{
+	Node* currentNode = G->nodes[G->findIndex(start)];
 
+	vector<int> path = {};
+	path.push_back(currentNode->id);
+
+	while (currentNode->predecessor != nullptr)
+	{
+		path.push_back(currentNode->predecessor->id);
+		currentNode = currentNode->predecessor;
+	}
+
+	return path;
+}
+
+vector<int> fullPath(Graph* G, vector<int> sPath)
+{
+	currentNode = G->nodes[sPath[sPath.size()-1]]				//initialize currentNode as end of paths
+	vector<int> path = {}
+
+	for (int i=sPath.size()-1; i>=0; i--)
+	{
+		Node* currentNode = G->nodes[i]
+		
+		vector<int> subPath = {};
+
+		path.push_back(currentNode->id);
+
+		while (currentNode->predecessor != nullptr)
+		{
+			path.push_back(currentNode->predecessor->id);
+			currentNode = currentNode->predecessor;
+		}
+		
+
+	}
+}
 
 int main()
 {
@@ -153,27 +184,31 @@ int main()
 	G.printAdjList();
 	cout<<endl;
 	G.printAdjMatrix();
-
-	//G.dijkstra(start);
-
-	//vector<int> path{0, 1, 3, 2};
-	//cout<<endl<<verifyPath(G, path, 15, 20)<<endl;
-
-/*
-	G.dijkstra(start);
-
-	G.printDistances();
-
-	G.dijkstra(2);
-
-	G.printDistances();
-*/
-
-	simplifyGraph(&G, start, end, maxCharge, charge); 
-	//Graph simpG = 
-	//simpG.printAdjList();
-	//simpG.printAdjMatrix();
 	
+	Graph simpG = simplifyGraph(&G, start, end, maxCharge, charge);
+
+	cout<<endl;
+
+	simpG.printAdjMatrix();
+	simpG.printAdjList();
+
+	simpG.dijkstra(simpG.findIndex(end));
+
+	if (simpG.nodes[simpG.findIndex(start)]->dist == INT_MAX)
+	{
+		cout<<"No suitable path from "<<start<<" to " << end << " exists";
+		return 1; 
+	}
+
+	vector<int> path = simplifiedPath(&simpG, start, end);
+
+	cout<<endl<<"Simplified Path: "<< path[0];
+	for (int i = 1; i < path.size(); i++)
+	{
+		cout<<", "<<path[i];
+	}
+	cout<<endl;
+
 }
 
 

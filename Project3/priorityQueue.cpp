@@ -83,6 +83,7 @@ void priorityQueue::push(Node* newNode)
 		pQueue[parent] = temp;
 
 		i = parent;
+		parent = (i-1)/2;
 	}
 }
 

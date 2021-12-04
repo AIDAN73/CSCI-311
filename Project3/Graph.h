@@ -16,17 +16,20 @@ public:
 	vector<vector<int>> adjMatrix;
 
 	Graph();
-	Graph(int i);
-	void initializeMatrix(int i);
+	Graph(int);
+	void initializeMatrix(int);
 
 	void printAdjList();
 	void printAdjMatrix();
 	void printDistances();
+
+	int findIndex(int);
+
 	bool isNeighbor(int, int);
 
 	bool isReachable(int, int);
 
-	void dijkstra(int s);
+	void dijkstra(int);
 };
 
 #endif
