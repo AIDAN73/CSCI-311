@@ -44,6 +44,7 @@ void priorityQueue::minHeapify(int i)
 		pQueue[parent] = temp;
 		minHeapify(parent);
 	}
+	
 	//cout<<"First if passed"<<endl;
 
 	if (left <= heapSize && pQueue[left]->dist < pQueue[i]->dist)		//if the left child is smaller, set the min to the left child

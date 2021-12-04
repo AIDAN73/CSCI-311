@@ -38,8 +38,8 @@ void Graph::printAdjList()
 	cout<<"Adjacency List: "<<endl;
 	for (int i = 0; i < nodes.size(); i++)
 	{
-		cout<<"Printing line "<<i<<" of "<< nodes.size()<<endl;
-		Node* currentNode = &nodes[i];
+		//cout<<"Printing line "<<i<<" of "<< nodes.size()<<endl;
+		Node* currentNode = nodes[i];
 		cout << currentNode->id << ": ";
 		for (int j = 0; j < currentNode->neighbors.size(); j++)
 		{
@@ -77,7 +77,7 @@ void Graph::printDistances()
 {
 	for (int i=0; i<nodes.size(); i++)
 	{
-		cout<<i<<": "<<nodes[i].dist<<endl;
+		cout<<i<<": "<<nodes[i]->dist<<endl;
 	}
 	cout<<endl;
 }
@@ -85,9 +85,9 @@ void Graph::printDistances()
 // checks if node v is a neighbor of u. Iterates through u's neighbors to see if one of their IDs matches v.
 bool Graph::isNeighbor(int u, int v)
 {
-	for (int i = 0; i < nodes[u].neighbors.size(); i++)
+	for (int i = 0; i < nodes[u]->neighbors.size(); i++)
 	{
-		if (nodes[u].neighbors[i]->id == v)
+		if (nodes[u]->neighbors[i]->id == v)
 			return true;
 	}
 	return false;
@@ -98,13 +98,13 @@ bool Graph::isReachable(int u, int v)
 {
 	for (int i = 0; i < nodes.size(); i++) // set all nodes to a baseline
 	{
-		nodes[i].visited = false;
+		nodes[i]->visited = false;
 	}
 
-	nodes[u].visited = true;
+	nodes[u]->visited = true;
 
 	vector<Node *> queue = {};
-	queue.push_back(&nodes[u]); // queue holds the list of nodes whose neighbors need to be explore
+	queue.push_back(nodes[u]); // queue holds the list of nodes whose neighbors need to be explore
 
 	while (queue.size() > 0) // visit all nodes
 	{
@@ -140,13 +140,13 @@ void Graph::dijkstra(int s)
 	cout<<"Dijkstra's from "<<s<<endl;
 	for (int i = 0; i < nodes.size(); i++) // set all nodes to a baseline
 	{
-		nodes[i].dist = INT_MAX;
-		nodes[i].predecessor = nullptr;
+		nodes[i]->dist = INT_MAX;
+		nodes[i]->predecessor = nullptr;
 	}
 
 	//printDistances();	
 
-	nodes[s].dist = 0;
+	nodes[s]->dist = 0;
 
 	//printDistances();
 
@@ -154,7 +154,7 @@ void Graph::dijkstra(int s)
 
 	for (int j = 0; j < nodes.size(); j++) 
 	{
-		minQueue.push(&nodes[j]);
+		minQueue.push(nodes[j]);
 	}
 	//minQueue.displayPriorityQueue();
 
@@ -162,22 +162,23 @@ void Graph::dijkstra(int s)
 	{
 		//cout<<"Here"<<endl;
 		Node* currentNode = minQueue.pop();
-		//cout<<"Current Node: "<<currentNode->id<<endl;
+		cout<<"Current Node: "<<currentNode->id<<endl;
 		for (int k=0; k < currentNode->neighbors.size(); k++)				//for each of the curent node's neighbors
 		{
 			//cout<<"\tLoop "<<k<<endl;
 			Node* currentNeighbor = currentNode->neighbors[k]; 				//holds a pointer to the current neighbor
-			//cout<<"\tCurrent Neighbor: "<<currentNeighbor->id<<endl;
+			cout<<"\tCurrent Neighbor: "<<currentNeighbor->id<<endl;
 
 			if (currentNeighbor->dist > (currentNode->dist + adjMatrix[currentNode->id][currentNeighbor->id]))		//if the neighbor's current distance is larger than the other path
 			{
 				currentNeighbor->dist = (currentNode->dist + adjMatrix[currentNode->id][currentNeighbor->id]);		//set it to the new path's distance
 				currentNeighbor->predecessor = currentNode;
+				cout<<"\tDistance from "<<currentNode->id<<" to "<<currentNeighbor->id<< "is " <<currentNeighbor->dist<<endl;
 				minQueue.minHeapify(minQueue.search(currentNeighbor));
-				//cout<<"\tminheapified"<<endl;
+				cout<<"\tminheapified"<<endl;
 			}
 		}
-		//minQueue.displayPriorityQueue();
+		minQueue.displayPriorityQueue();
 		
 	}
 	//printDistances();

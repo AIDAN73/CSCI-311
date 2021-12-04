@@ -11,7 +11,7 @@
 class Graph
 {
 public:
-	vector<Node> nodes;
+	vector<Node*> nodes;
 
 	vector<vector<int>> adjMatrix;
 
