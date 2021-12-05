@@ -38,33 +38,27 @@ void priorityQueue::minHeapify(int i)
 
 	if (pQueue[parent] != pQueue[i] && pQueue[parent]->dist > pQueue[i]->dist)
 	{
-		//cout<<"Called on parent"<<endl;
 		Node* temp = pQueue[i];				//swap the min with the current index, then check the swapped subheap
 		pQueue[i] = pQueue[parent];
 		pQueue[parent] = temp;
 		minHeapify(parent);
 	}
-	
-	//cout<<"First if passed"<<endl;
 
 	if (left <= heapSize && pQueue[left]->dist < pQueue[i]->dist)		//if the left child is smaller, set the min to the left child
 	{
 		minI = left;
 	}
-	//cout<<"Second if passed"<<endl;
 
 	if (right <= heapSize && pQueue[right]->dist < pQueue[minI]->dist)		//if the right child is the smallest, set the min to the right child
 	{
 		minI = right;
 	}
-	//cout<<"Third if passed"<<endl;
 
 	if (minI != i)
 	{
 		Node* temp = pQueue[i];				//swap the min with the current index, then check the swapped subheap
 		pQueue[i] = pQueue[minI];
 		pQueue[minI] = temp;
-		//cout<<"Gonna get called"<<endl;
 		minHeapify(minI);
 	}
 }
@@ -95,32 +89,6 @@ Node* priorityQueue::pop()
     pQueue.pop_back();
     minHeapify(0);
     return topNode;
-}
-
-//deletes a node from the priority queue based on its index. Used to move critically low dist nodes from the middle of the priority queue to the emergency arrivals 
-Node* priorityQueue::deleteNode(int i)
-{
-	Node* node = pQueue[i];
-    pQueue[i] = pQueue[pQueue.size()-1];		//replace index with last value
-    pQueue.pop_back();							//get rid of last value
-	int parent = (i-1)/2;
-
-	while (i>0 && pQueue[parent]->dist > pQueue[i]->dist)		//sends value up until it belongs
-	{
-		Node* temp = pQueue[i];
-		pQueue[i] = pQueue[parent];
-		pQueue[parent] = temp;
-		i = parent;
-	}
-
-    minHeapify(i);				//re minheapify after all the shuffling
-	return node;
-}
-
-//returns but does not delete top of minheap
-Node* priorityQueue::peek()
-{
-    return pQueue[0];
 }
 
 int priorityQueue::search(Node* n)
