@@ -40,6 +40,15 @@ struct Edge
  * ******************************************************************************************************/
 void printExpression(Graph T, int root)
 {
+	Node* n = &T.nodes[root];
+
+	while(n->neighbors.size() != 0)	
+	{
+		cout<<n->neighbors[0]->data<<n->data;
+		n = n->neighbors[1];
+	}
+	cout<<n->data<<endl;
+
 	
 }
 
