@@ -38,8 +38,29 @@ struct Edge
  * Write a function that prints the expression associated with the given tree rooted at the given node. *
  * Note that the edges of T will be directed away from the root.                                        *
  * ******************************************************************************************************/
+
+void printExpressionRecursive(Graph T, int root)
+{
+	Node* n = &T.nodes[root];
+
+	//cout<<"Current node: "<<n->data<<endl;
+	if (n->neighbors.size() != 0)	
+	{	
+		printExpressionRecursive(T, n->neighbors[0]->id);
+		cout<<n->data;
+		printExpressionRecursive(T, n->neighbors[1]->id);
+	}
+	else cout<<n->data;
+}
+
+
 void printExpression(Graph T, int root)
 {
+	printExpressionRecursive(T, root);
+	cout<<endl;
+	
+
+/*
 	Node* n = &T.nodes[root];
 
 	while(n->neighbors.size() != 0)	
@@ -48,7 +69,7 @@ void printExpression(Graph T, int root)
 		n = n->neighbors[1];
 	}
 	cout<<n->data<<endl;
-
+*/
 	
 }
 
@@ -206,6 +227,8 @@ Graph makeAST()
 	}
 	return G;
 }
+
+
 
 /*********************************************************************************************************************
  * A function to collect input from the user for making a directed graph. The first line of input should include two *
