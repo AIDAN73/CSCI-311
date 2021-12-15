@@ -58,28 +58,49 @@ void printExpression(Graph T, int root)
 {
 	printExpressionRecursive(T, root);
 	cout<<endl;
-	
-
-/*
-	Node* n = &T.nodes[root];
-
-	while(n->neighbors.size() != 0)	
-	{
-		cout<<n->neighbors[0]->data<<n->data;
-		n = n->neighbors[1];
-	}
-	cout<<n->data<<endl;
-*/
-	
 }
 
 /****************************************************************************************************************************************************
  * QUESTION 2                                                                                                                                       *
  * Write a function that makes and returns an n by m grid graph. Vertices must be labeled in increasing order from left to right and top to bottom. *
  * **************************************************************************************************************************************************/
-Graph makeGrid(int n, int m)
+Graph makeGrid(int r, int c)
 {
 	Graph G;
+
+	for (int i=0; i<r*c; i++)
+	{
+		Node n(i, to_string(i)); 
+		G.nodes.push_back(n);
+	}
+
+	//form rows
+	for (int i=0; i<r*c; i+=c)				//start at the beginning of each row, stop when you run out of columns
+	{
+		for (int j=0; j<c-1; j++)
+		{
+			int index = i+j;
+			int right = index+1;
+
+			G.nodes[index].neighbors.push_back(&G.nodes[right]);					//center to right
+			G.nodes[right].neighbors.push_back(&G.nodes[index]);					//right to center
+
+		}
+	}
+
+	//form columns
+	for (int i=0; i<c; i++)				//start at the top of each column, stop when you run out of rows
+	{
+		for (int j=0; i+j<r*c-c; j+=c)
+		{
+			int index = i+j;
+			int below = index+c;
+
+			G.nodes[index].neighbors.push_back(&G.nodes[below]);					//center to right
+			G.nodes[below].neighbors.push_back(&G.nodes[index]);					//right to center
+
+		}
+	}
 	return G;
 }
 
@@ -90,11 +111,81 @@ Graph makeGrid(int n, int m)
 // This function signature is provided if you would like to use it but you are not required to do so
 int classifyEdgesRecur(int s, int time, Graph &G, vector<Edge> &tree, vector<Edge> &forward, vector<Edge> &back, vector<Edge> &cross)
 {
-	return -1;
+	time++;
+	G.nodes[s].discovered = time;			//set discovered time
+	G.nodes[s].visited = true;
+
+	for (int i=0; i < G.nodes[s].neighbors.size(); i++)				//visit all the neighbors
+	{
+		if (G.nodes[s].neighbors[i]->visited == false)				//if the node hasn't been visited before, explore it further before continueing with this node
+		{
+			G.nodes[s].neighbors[i]->predecessor = &G.nodes[s];
+			time = classifyEdgesRecur( G.nodes[s].neighbors[i]->id , time, G, tree, forward, back, cross);
+		}
+	}
+	time++;
+	G.nodes[s].finished = time;				//after visiting all the neighbors and subneighbors, mark finished time
+	return time;							//return time so it can be used for other subgraphs
 }
 
 void classifyEdges(Graph &G, vector<Edge> &tree, vector<Edge> &forward, vector<Edge> &back, vector<Edge> &cross)
 {
+	for (int i=0; i < G.nodes.size(); i++)
+	{
+		G.nodes[i].visited = false;			//sets a baseline for all the nodes in the graph
+		G.nodes[i].predecessor = nullptr;
+		G.nodes[i].discovered = -1;
+		G.nodes[i].finished = -1;
+	}
+
+	int time = 0;
+	for (int j=0; j<G.nodes.size(); j++)			//ensures that all nodes in the graph are visited, even if they're disconnected
+	{
+		if (G.nodes[j].visited == false)
+		{
+			time = classifyEdgesRecur(j, time, G, tree, forward, back, cross);			//recursively visits all the neighbors of the node, starting with itself
+		}
+	}
+
+	for (int i=0; i<G.nodes.size(); i++)
+	{
+		Node* currentNode = &G.nodes[i];
+
+		for (int j=0; j<G.nodes[i].neighbors.size(); j++)
+		{
+			Node* currentNeighbor = G.nodes[i].neighbors[j];
+
+			Edge e; 												//declare an edge to sort
+			e.from = *currentNode;
+			e.to = *currentNeighbor;
+
+			if (currentNeighbor->predecessor == currentNode)	tree.push_back(e);			//tree edge if the second's predecessor is the first
+
+			else if ((currentNeighbor->discovered < currentNode->discovered) && (currentNeighbor->finished > currentNode->finished))	//forward edge if second discovered before and finished after
+			{
+				back.push_back(e);
+			}
+
+			else if ((currentNeighbor->discovered > currentNode->discovered) && (currentNeighbor->finished < currentNode->finished))	//back edge if second discovered after and finished before
+			{
+				back.push_back(e);
+			}
+
+			else if ((currentNeighbor->discovered > currentNode->discovered) && (currentNeighbor->finished > currentNode->finished))	//cross edge if second discovered after and finished after
+			{
+				back.push_back(e);
+			}
+		}
+	}
+
+
+
+
+//way of identifying tree edges: predecessors show all tree edges
+
+//
+
+
 }
 
 /********************************************************************************************************
