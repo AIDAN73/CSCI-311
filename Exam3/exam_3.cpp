@@ -57,7 +57,7 @@ void printExpressionRecursive(Graph T, int root)
 void printExpression(Graph T, int root)
 {
 	printExpressionRecursive(T, root);
-	cout<<endl;
+	//cout<<endl;
 }
 
 /****************************************************************************************************************************************************
@@ -73,6 +73,8 @@ Graph makeGrid(int r, int c)
 		Node n(i, to_string(i)); 
 		G.nodes.push_back(n);
 	}
+
+
 
 	//form rows
 	for (int i=0; i<r*c; i+=c)				//start at the beginning of each row, stop when you run out of columns
@@ -130,6 +132,7 @@ int classifyEdgesRecur(int s, int time, Graph &G, vector<Edge> &tree, vector<Edg
 
 void classifyEdges(Graph &G, vector<Edge> &tree, vector<Edge> &forward, vector<Edge> &back, vector<Edge> &cross)
 {
+	//perform DFS from root to set the discovered and finished times
 	for (int i=0; i < G.nodes.size(); i++)
 	{
 		G.nodes[i].visited = false;			//sets a baseline for all the nodes in the graph
@@ -161,19 +164,24 @@ void classifyEdges(Graph &G, vector<Edge> &tree, vector<Edge> &forward, vector<E
 
 			if (currentNeighbor->predecessor == currentNode)	tree.push_back(e);			//tree edge if the second's predecessor is the first
 
-			else if ((currentNeighbor->discovered < currentNode->discovered) && (currentNeighbor->finished > currentNode->finished))	//forward edge if second discovered before and finished after
+			else if ((currentNode->discovered < currentNeighbor->discovered) && (currentNode->finished > currentNeighbor->finished))	//forward edge if second discovered before and finished after
+			{
+				forward.push_back(e);
+			}
+
+			else if ((currentNode->discovered > currentNeighbor->discovered) && (currentNode->finished < currentNeighbor->finished))	//back edge if second discovered after and finished before
 			{
 				back.push_back(e);
 			}
 
-			else if ((currentNeighbor->discovered > currentNode->discovered) && (currentNeighbor->finished < currentNode->finished))	//back edge if second discovered after and finished before
+			else if ((currentNode->discovered > currentNeighbor->discovered) && (currentNode->finished > currentNeighbor->finished))	//cross edge if second discovered after and finished after
 			{
-				back.push_back(e);
+				cross.push_back(e);
 			}
 
-			else if ((currentNeighbor->discovered > currentNode->discovered) && (currentNeighbor->finished > currentNode->finished))	//cross edge if second discovered after and finished after
+			else if ((currentNode->discovered < currentNeighbor->discovered) && (currentNode->finished < currentNeighbor->finished))	//cross edge if second discovered after and finished after
 			{
-				back.push_back(e);
+				cross.push_back(e);
 			}
 		}
 	}
